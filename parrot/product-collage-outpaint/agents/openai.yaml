@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Collage Outpaint"
+  short_description: "Split, center, and outpaint product collages."
+  default_prompt: "Use $product-collage-outpaint to split this product collage, keep all panels, center each crop on a source-native 3:4 canvas, and outpaint the margins."
