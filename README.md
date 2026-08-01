@@ -16,3 +16,4 @@ AI-powered cross-border brand system for handmade & independent sellers.
 
 ### Parrot (② 鹦鹉)
 - [`parrot/ai-hero-photo`](parrot/ai-hero-photo) — AI hero image generation (model ref + garment flatlay → 4-view product photos)
+- [9.9 跨境实战资料包](https://github.com/Tenx/BrandOS) — ¥9.9 引流资料包，主图改造实战教程（Parrot 模块配套内容）
