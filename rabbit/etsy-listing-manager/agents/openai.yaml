@@ -1,0 +1,4 @@
+interface:
+  display_name: "Etsy Listing Manager"
+  short_description: "Write, audit, publish, fix, and reply."
+  default_prompt: "Use $etsy-listing-manager to write, audit, publish, verify, fix, or answer buyer questions for Etsy listings."
