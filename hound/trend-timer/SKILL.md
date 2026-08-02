@@ -27,6 +27,9 @@ If not provided, ask before proceeding.
 opencli reddit search "<keyword>" --limit 50 -f yaml
 
 # Etsy search sorted by most recent — what's being listed now vs older listings
+# Note: Etsy may ignore sort_on=date_desc and return score-ranked results anyway.
+# If both extracts look identical, treat the combined result as top listings only
+# and rely on Reddit timestamps as the primary recency/trend signal.
 opencli browser main open "https://www.etsy.com/search?q=<keyword>&sort_on=date_desc"
 opencli browser main extract
 
