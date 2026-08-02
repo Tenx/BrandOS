@@ -17,6 +17,7 @@ they're weak, and what angle beats them.
 User provides one of:
 - An Etsy shop URL: `https://www.etsy.com/shop/ShopName`
 - An Etsy listing URL: `https://www.etsy.com/listing/...`
+- An independent store URL: `https://brand.com/products` or `https://brand.com`
 - A shop name: `"ShopName"`
 
 If not provided, ask before proceeding.
@@ -27,17 +28,32 @@ If not provided, ask before proceeding.
 
 ```bash
 # Shop overview — reviews, sales count, about section
-opencli browser main open "https://www.etsy.com/shop/<ShopName>"
+opencli browser main open "<shop_url>"
 opencli browser main extract
 
 # Top listings — titles, prices, review counts
-opencli browser main open "https://www.etsy.com/shop/<ShopName>?sort_on=most_recent"
+opencli browser main open "<shop_url>?sort_on=most_recent"  # Etsy
 opencli browser main extract
 
-# Reviews page — what buyers praise and complain about
-opencli browser main open "https://www.etsy.com/shop/<ShopName>/reviews"
+# Reviews page
+opencli browser main open "<shop_url>/reviews"  # Etsy
 opencli browser main extract
 ```
+
+**JS lazy-load fallback**: if `extract` returns fewer than 200 characters or only navigation
+chrome (e.g. "Sort By / 6 Item(s) / Show"), the product list is JS-rendered and didn't load.
+Do not retry the same URL. Instead:
+
+1. Use `find` to locate any visible product link:
+   ```bash
+   opencli browser main find --css "a[href*='/listing/'], a[href*='/products/'], a[href*='/collections/']"
+   ```
+2. Open the first 2–3 individual product URLs directly and extract those:
+   ```bash
+   opencli browser main open "<product_url>"
+   opencli browser main extract
+   ```
+3. For independent stores, also try the homepage and `/about` page for brand story signals.
 
 ### 2. Extract signals
 
