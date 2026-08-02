@@ -87,11 +87,18 @@ sentence.
 
 ## Platform notes
 
-**Reddit login**: `opencli reddit search` works without login. If it returns AUTH_REQUIRED,
-run `opencli reddit login` first.
+**Reddit**: works without login in most cases.
 
-**Instagram login**: required. If commands return HTTP 400, run `opencli instagram login` first,
-then re-run the scout.
+**Instagram**: prefer `opencli instagram user <username>` when logged in. If not logged in,
+fall back to browser:
+```bash
+opencli browser main open "https://www.instagram.com/<username>/"
+opencli browser main extract
+```
+This fetches public profile posts without requiring a session.
 
-**Etsy**: uses the `etsy-listing-manager` skill's OAuth token. If not configured, run the OAuth
-setup from `rabbit/etsy-listing-manager` first.
+**Etsy**: uses the `etsy-listing-manager` OAuth token. If not configured, fall back to browser:
+```bash
+opencli browser main open "https://www.etsy.com/search?q=<keyword>"
+opencli browser main extract
+```
