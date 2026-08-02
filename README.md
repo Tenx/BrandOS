@@ -15,7 +15,9 @@ AI-powered cross-border brand system for handmade & independent sellers.
 ## Skills
 
 ### Hound (① 嗅探犬) — Product research & market validation
-- [`hound/market-scout`](hound/market-scout) — Scout a product category across Reddit + Instagram + Etsy, output a decision-ready report
+- [`hound/market-scout`](hound/market-scout) — Scout a category across Reddit + Instagram + Etsy → decision-ready report
+- [`hound/competitor-spy`](hound/competitor-spy) — Deep-dive a competitor shop → gaps, weaknesses, how to beat them
+- [`hound/trend-timer`](hound/trend-timer) — Detect seasonality and timing signals → when to launch
 
 ### Parrot (② 鹦鹉) — Brand story, content & visual identity
 - [`parrot/ai-hero-photo`](parrot/ai-hero-photo) — AI hero image generation: model ref + garment flatlay → 4-view product photos
