@@ -27,15 +27,17 @@ If the user hasn't provided one, ask for it before proceeding.
 # Reddit — buyer discussions, pain points, demand signals
 opencli reddit search "<keyword>" --limit 20 -f yaml
 
-# Instagram — visual style trends, top accounts in the niche
-opencli instagram search "<keyword>" -f yaml
+# Instagram — visual style trends via hashtag page
+opencli browser main open "https://www.instagram.com/explore/tags/<keyword_no_spaces>/"
+opencli browser main extract
 
-# Etsy — real listing data, pricing, competition density
-python3 ~/.agents/skills/market-scout/scripts/etsy_scout.py "<keyword>"
+# Etsy — top listings, pricing, competition density
+opencli browser main open "https://www.etsy.com/search?q=<keyword>&sort_on=score"
+opencli browser main extract
 ```
 
-Run all three simultaneously. A scout is complete when all three commands return output or a
-clear error.
+Run Reddit and browser opens simultaneously. Extract after each browser open.
+A scout is complete when all three return output.
 
 ### 2. Extract signals
 
@@ -47,14 +49,13 @@ From each source pull only what changes the decision:
 - Subreddits where the topic lives → where buyers gather
 
 **Instagram**
-- Account names and follower counts from search results → niche size
-- Run `opencli instagram user <top_account> -f yaml` on the 2-3 highest-ranked accounts → recent
-  post themes, engagement patterns, visual style
+- Dominant visual styles in post alt-text and captions → aesthetic direction
+- Post density on the hashtag page → niche size and activity level
 
 **Etsy**
-- Price range of top listings
-- Review count on best sellers → demand volume
-- Gap: what's missing or low-quality in current supply
+- Product titles of top listings → winning keywords and positioning angles
+- Ad vs organic ratio → competition intensity
+- Price range across top results → viable price points
 
 ### 3. Output the scout report
 
@@ -69,8 +70,8 @@ without a reason.
 
 ### demand signals
 - Reddit: [top subreddits + strongest posts]
-- Instagram: [top account + follower count + dominant visual style]
-- Etsy: [price range, review volume on top sellers]
+- Instagram: [hashtag activity + dominant visual style]
+- Etsy: [top listing titles + price range]
 
 ### buyer pain points
 [3–5 bullet points from Reddit discussions]
@@ -85,20 +86,15 @@ without a reason.
 The report is complete when all five sections are present and the verdict is a single actionable
 sentence.
 
-## Platform notes
+## Notes
 
-**Reddit**: works without login in most cases.
+**Reddit**: works without login.
 
-**Instagram**: prefer `opencli instagram user <username>` when logged in. If not logged in,
-fall back to browser:
+**Instagram**: uses `opencli browser` to fetch public hashtag pages — no login required.
+For deeper profile data, optionally run:
 ```bash
-opencli browser main open "https://www.instagram.com/<username>/"
+opencli browser main open "https://www.instagram.com/<top_account>/"
 opencli browser main extract
 ```
-This fetches public profile posts without requiring a session.
 
-**Etsy**: uses the `etsy-listing-manager` OAuth token. If not configured, fall back to browser:
-```bash
-opencli browser main open "https://www.etsy.com/search?q=<keyword>"
-opencli browser main extract
-```
+**Etsy**: uses `opencli browser` to fetch public search results — no token required.
