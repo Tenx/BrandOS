@@ -20,6 +20,9 @@ AI-powered cross-border brand system for handmade & independent sellers.
 - [`hound/trend-timer`](hound/trend-timer) — Detect seasonality and timing signals → when to launch
 
 ### Parrot (② 鹦鹉) — Brand story, content & visual identity
+- [`parrot/brand-story`](parrot/brand-story) — Brand name, tagline, about/bio text & voice guide → paste-ready for any platform
+- [`parrot/product-copy`](parrot/product-copy) — Product hook, bullets, story & specs → platform-neutral copy for Rabbit skills
+- [`parrot/social-post`](parrot/social-post) — Instagram, Pinterest, TikTok & Facebook posts from one product brief
 - [`parrot/ai-hero-photo`](parrot/ai-hero-photo) — AI hero image generation: model ref + garment flatlay → 4-view product photos
 - [`parrot/product-collage-outpaint`](parrot/product-collage-outpaint) — Post-process hero images: split collage, upscale, FLUX background extension
 
