@@ -14,7 +14,7 @@ description: AI 主图生成：上传模特参考图 + 产品平铺图，生成�
 首次使用，运行：
 
 ```bash
-python3 /Users/I742076/.claude/skills/ai-hero-photo/scripts/generate.py --setup
+python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py --setup
 ```
 
 按提示填写 Replicate API token（在 https://replicate.com/account/api-tokens 获取）。
@@ -23,7 +23,7 @@ Token 存入 `~/.ai-hero-photo/config.json`，不写入任何代码文件。
 ### Step 2 — 生成主图
 
 ```bash
-python3 /Users/I742076/.claude/skills/ai-hero-photo/scripts/generate.py \
+python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
   --model-ref /path/to/model_reference.jpg \
   --garment  /path/to/garment_flatlay.jpg \
   --product  "奶油色钩织背心"
@@ -32,13 +32,20 @@ python3 /Users/I742076/.claude/skills/ai-hero-photo/scripts/generate.py \
 干跑（只预览 prompt，不调 API）：
 
 ```bash
-python3 ... --dry-run
+python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py --dry-run \
+  --model-ref /path/to/model_reference.jpg \
+  --garment  /path/to/garment_flatlay.jpg \
+  --product  "奶油色钩织背心"
 ```
 
 指定输出目录：
 
 ```bash
-python3 ... --output-dir ~/Desktop/my-product
+python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
+  --model-ref /path/to/model_reference.jpg \
+  --garment  /path/to/garment_flatlay.jpg \
+  --product  "奶油色钩织背心" \
+  --output-dir ~/Desktop/my-product
 ```
 
 ## 输入图片准备
@@ -61,7 +68,11 @@ python3 ... --output-dir ~/Desktop/my-product
 默认走 Replicate (`openai/gpt-image-2`)。国内用户如需切换硅基流动：
 
 ```bash
-python3 ... --provider siliconflow
+python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
+  --model-ref /path/to/model_reference.jpg \
+  --garment  /path/to/garment_flatlay.jpg \
+  --product  "奶油色钩织背心" \
+  --provider siliconflow
 ```
 
 需要在 config.json 里补充 `siliconflow_api_key`（在 https://cloud.siliconflow.cn 申请）。

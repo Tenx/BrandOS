@@ -5,7 +5,7 @@ description: Batch process product collage images that contain multiple fashion/
 
 # Product Collage Outpaint
 
-Use this skill for the Hazumi-style workflow where one source image contains several product/model photos separated by white gutters or collage panels, and the desired output is a clean folder of individual listing-ready 3:4 ecommerce images.
+Use this skill when one source image contains several product/model photos separated by white gutters or collage panels, and the desired output is a clean folder of individual listing-ready 3:4 ecommerce images.
 
 ## Default Workflow
 
@@ -24,7 +24,7 @@ Use this skill for the Hazumi-style workflow where one source image contains sev
 Use the ecommerce script for the default repeatable pipeline:
 
 ```bash
-python /Users/I742076/.codex/skills/product-collage-outpaint/scripts/ecommerce_collage.py \
+python ~/.agents/skills/product-collage-outpaint/scripts/ecommerce_collage.py \
   /path/to/source.png \
   --output-dir /path/to/output_parent \
   --target 1200x1600 \
@@ -35,7 +35,7 @@ python /Users/I742076/.codex/skills/product-collage-outpaint/scripts/ecommerce_c
 Use the older outpaint script only when the user explicitly wants FLUX background extension:
 
 ```bash
-python /Users/I742076/.codex/skills/product-collage-outpaint/scripts/process_collage.py \
+python ~/.agents/skills/product-collage-outpaint/scripts/process_collage.py \
   /path/to/source.png \
   --output-dir /path/to/output_parent \
   --target auto \
@@ -45,29 +45,26 @@ python /Users/I742076/.codex/skills/product-collage-outpaint/scripts/process_col
 Common modes:
 
 ```bash
-# Split only with the older script
-python .../process_collage.py source.png --stage split
+# Split only
+python ~/.agents/skills/product-collage-outpaint/scripts/process_collage.py source.png --stage split
 
 # Split, center on source-native 3:4 canvas, then FLUX outpaint masked margins
-python .../process_collage.py source.png --stage outpaint --replicate-config /path/to/.openai_config.json
+# Replicate token is read from ~/.ai-hero-photo/config.json by default
+python ~/.agents/skills/product-collage-outpaint/scripts/process_collage.py source.png \
+  --stage outpaint \
+  --replicate-config ~/.ai-hero-photo/config.json
 
-# Upscale low-resolution split or product images after QA
-python .../scripts/upscale_images.py /path/to/image_dir \
+# Upscale low-resolution split images after QA
+python ~/.agents/skills/product-collage-outpaint/scripts/upscale_images.py /path/to/image_dir \
   --output-dir /path/to/upscaled_4x \
   --scale 4
 
-# Optional AI upscale only when preserving exact stitch texture is less important
-python .../scripts/upscale_images.py /path/to/image_dir \
+# Optional AI upscale (smoother, but may alter stitch texture)
+python ~/.agents/skills/product-collage-outpaint/scripts/upscale_images.py /path/to/image_dir \
   --output-dir /path/to/ai_upscaled_4x \
   --method replicate \
-  --replicate-config /path/to/.openai_config.json \
+  --replicate-config ~/.ai-hero-photo/config.json \
   --scale 4
-```
-
-For this project, prefer:
-
-```bash
---replicate-config /Users/I742076/.claude/projects/hazumi/image_processing/.openai_config.json
 ```
 
 ## Ecommerce Output Rules
