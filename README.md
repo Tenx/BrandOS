@@ -40,7 +40,10 @@ AI-powered cross-border brand system for handmade & independent sellers.
 - [`bee/campaign-plan`](bee/campaign-plan) — ROAS-driven 3-phase campaign plan: budget allocation, bid strategy, kill rules, scale rules
 
 ### Elephant (⑤ 大象) — Data review, fulfillment & retention
-- [`elephant/etsy-customer-service`](elephant/etsy-customer-service) — Etsy buyer message reading, reply drafting & sending via opencli
+- [`elephant/customer-service`](elephant/customer-service) — Cross-platform buyer messaging: Etsy, Amazon, Shopify — read, classify, draft, send
+- [`elephant/sales-review`](elephant/sales-review) — Weekly/monthly sales analysis: tier products by performance, identify root causes, output top 3 actions
+- [`elephant/review-manager`](elephant/review-manager) — Monitor reviews, reply to negatives, request reviews from satisfied buyers
+- [`elephant/retention`](elephant/retention) — Segment past buyers, draft re-engagement messages, suggest bundles, plan seasonal campaigns
 
 ## 9.9 Intro Guide
 ¥9.9 跨境实战资料包 — Parrot 模块配套入门教程，主图改造 + Brand OS 系统导览
