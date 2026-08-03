@@ -24,6 +24,9 @@ Plus optionally:
 - **Platform(s)** — default: all four. User can specify just one or two.
 - **Goal** — traffic to shop / brand awareness / product launch / seasonal push
 - **Tone override** — if different from brand voice
+- **Channel** — where the product is sold: `etsy` / `amazon` / `shopify` / `independent` (default: unspecified)
+  Used to filter hashtags and CTAs — e.g. `#etsyshop` only appears when channel is `etsy`;
+  Amazon sellers get "find us on Amazon" CTA instead of "link in bio"
 
 If no product info provided, ask before proceeding.
 
@@ -43,7 +46,12 @@ Extract: product name, key features, price, any lifestyle language already in th
 **Instagram**
 - Caption length: 150–300 words
 - Structure: hook (1 line) → story/scene (2–3 sentences) → CTA (1 line) → hashtags (separate block)
-- Hashtags: 15–20, mix broad (#handmade, #slowfashion) + niche (#crochetlover, #etsyseller) + seasonal
+- Hashtags: 15–20, mix broad (#handmade, #slowliving) + niche (product-specific) + seasonal
+- Channel-aware hashtags:
+  - `etsy`: include #etsyshop #etsyseller #etsyfinds
+  - `amazon`: include #amazonfind #amazonhandmade — omit #etsy tags
+  - `shopify` / `independent`: include #shopnow #shopsmall — omit platform-specific tags
+  - unspecified: use generic discovery tags only, no platform tags
 - Visual suggestion: describe the ideal shot (flat lay / lifestyle / model close-up)
 
 **Pinterest**
@@ -61,7 +69,11 @@ Extract: product name, key features, price, any lifestyle language already in th
 **Facebook**
 - Post length: 40–80 words (shorter than Instagram)
 - Conversational tone, direct question or relatable opener
-- CTA with link placeholder: "Shop here → [link]"
+- CTA with link placeholder, channel-aware:
+  - `etsy`: "Shop on Etsy → [link]"
+  - `amazon`: "Find us on Amazon → [link]"
+  - `shopify` / `independent`: "Shop here → [link]"
+  - unspecified: "Shop here → [link]"
 - No hashtags or max 2–3
 
 ### 3. Batch or single
