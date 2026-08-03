@@ -57,6 +57,45 @@ All listing content must be in **Russian**. If user provides content in English 
 - Габариты (Dimensions: LxWxH in mm)
 - Category-specific attributes vary — ask user to confirm if uncertain
 
+## Category ID Lookup
+
+Ozon `category_id` is a numeric ID — do NOT hardcode guesses. Always resolve it first.
+
+### Method A — API lookup (recommended if credentials configured)
+
+```bash
+POST https://api-seller.ozon.ru/v1/description-category/tree
+Headers: Client-Id: <id>  Api-Key: <key>
+Body: { "language": "RU" }
+```
+
+Walk the returned tree to find the matching leaf node. Use that node's `description_category_id`.
+
+### Method B — Seller portal lookup (no API needed)
+
+1. Open https://seller.ozon.ru → Товары и цены → Добавить товар
+2. Search for the category by keyword (e.g. "свечи")
+3. Hover over the matching category — the numeric ID appears in the URL or tooltip
+4. Copy that ID into `category_id`
+
+### Common categories for cross-border handmade sellers (names only — verify IDs via Method A/B)
+
+| Категория (Russian) | Typical products |
+|---|---|
+| Свечи и аромалампы | Candles, wax melts, oil burners |
+| Ароматизаторы для дома | Reed diffusers, room sprays, sachets |
+| Одежда → Женская одежда → Топы | Crop tops, tank tops, camisoles |
+| Одежда → Женская одежда → Свитеры и кардиганы | Knit / crochet sweaters, cardigans |
+| Украшения для дома | Macrame wall art, woven decor |
+| Постельное бельё | Linen, cotton bedding sets |
+| Украшения → Браслеты | Handmade bracelets |
+| Украшения → Серьги | Handmade earrings |
+| Сумки → Женские сумки | Tote bags, crochet bags |
+| Косметика → Уход за телом | Body scrubs, bath soaks |
+
+**Note:** Ozon restructures its category tree periodically. Always verify IDs via Method A or B
+before submitting — never rely on cached or hardcoded IDs.
+
 **Rich content** (Ozon Premium Content)
 - Similar to Amazon A+
 - Brief: headline banner + 3 feature blocks + lifestyle image descriptions
