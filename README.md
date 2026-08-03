@@ -35,7 +35,9 @@ AI-powered cross-border brand system for handmade & independent sellers.
 - [`rabbit/yun-delivery`](rabbit/yun-delivery) — Cross-border fulfillment via YunExpress (云途): submit waybills, process Etsy orders
 
 ### Bee (④ 蜜蜂) — Paid traffic & distribution
-> Skills coming soon
+- [`bee/audience-finder`](bee/audience-finder) — Build buyer persona + platform targeting parameters for Meta, Pinterest, TikTok, Google Shopping
+- [`bee/ad-creative-brief`](bee/ad-creative-brief) — Generate image specs, video hooks, A/B copy variants per platform from product copy
+- [`bee/campaign-plan`](bee/campaign-plan) — ROAS-driven 3-phase campaign plan: budget allocation, bid strategy, kill rules, scale rules
 
 ### Elephant (⑤ 大象) — Data review, fulfillment & retention
 - [`elephant/etsy-customer-service`](elephant/etsy-customer-service) — Etsy buyer message reading, reply drafting & sending via opencli
