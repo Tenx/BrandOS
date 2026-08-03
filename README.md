@@ -28,6 +28,10 @@ AI-powered cross-border brand system for handmade & independent sellers.
 
 ### Rabbit (③ 兔子) — Listing, SEO & publishing
 - [`rabbit/etsy-listing-manager`](rabbit/etsy-listing-manager) — Etsy listing SEO copy, titles, tags, attributes, CSV audit, draft publishing & OAuth
+- [`rabbit/shopify-listing`](rabbit/shopify-listing) — Shopify product listing: title, body HTML, SEO meta, tags + Admin API publish
+- [`rabbit/woocommerce-listing`](rabbit/woocommerce-listing) — WooCommerce product listing: name, description, Yoast SEO, attributes + REST API publish
+- [`rabbit/amazon-listing`](rabbit/amazon-listing) — Amazon listing: title, bullets, description, backend keywords, A+ brief + SP-API publish
+- [`rabbit/ozon-listing`](rabbit/ozon-listing) — Ozon listing: Russian copy, attributes, rich content + Seller API publish
 - [`rabbit/yun-delivery`](rabbit/yun-delivery) — Cross-border fulfillment via YunExpress (云途): submit waybills, process Etsy orders
 
 ### Bee (④ 蜜蜂) — Paid traffic & distribution
