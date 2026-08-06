@@ -124,6 +124,39 @@ Do NOT set permalink structure to `/%postname%/` on a PHP built-in server — pr
 require `.htaccess` which the built-in server ignores. Keep permalink structure as plain (`''`)
 or use `?p=ID` query param to preview.
 
+WooCommerce will redirect `?p=<id>` to `?product=<slug>` automatically — follow the redirect,
+do not fight it. The actual working URL is `?product=<slug>`.
+
+**Theme choice matters for local preview**
+Block themes (Twenty Twenty-Four, Twenty Twenty-Five) do NOT render WooCommerce product images
+correctly on PHP built-in server — CSS/JS assets fail to load. Install Storefront (WooCommerce's
+official theme) for correct product page rendering:
+```bash
+$WP theme install storefront --activate
+```
+Even with Storefront, the product gallery image may appear blank locally because WooCommerce's
+flexslider JS requires full asset pipeline. The image IS attached correctly (verify with
+`wc product get <id> --fields=images`). On a real Nginx/Apache server it renders fine.
+
+**Upload product images via WP-CLI**
+```bash
+# Step 1: import image to media library and attach to product
+ATTACH_ID=$($WP media import /path/to/hero.png \
+  --title="product-hero" \
+  --post_id=$PRODUCT_ID \
+  --porcelain)
+
+# Step 2: set as WooCommerce featured image (use wc product update, NOT post meta)
+$WP wc product update $PRODUCT_ID --user=admin \
+  --images="[{\"id\":$ATTACH_ID}]"
+
+# Step 3: regenerate thumbnails (required for WooCommerce to show image)
+$WP media regenerate --yes
+```
+
+Note: setting `_thumbnail_id` post meta directly does NOT work with WooCommerce block themes.
+Always use `wc product update --images` to set the product image.
+
 ### 2b. Publish via REST API (remote stores)
 
 ```
