@@ -138,6 +138,25 @@ Even with Storefront, the product gallery image may appear blank locally because
 flexslider JS requires full asset pipeline. The image IS attached correctly (verify with
 `wc product get <id> --fields=images`). On a real Nginx/Apache server it renders fine.
 
+**Fix flexslider blank image on PHP built-in server**
+WooCommerce's flexslider JS initializes but fails silently, positioning slides at `left:-99999px`.
+`wp_dequeue_script` does NOT work — WooCommerce registers scripts via its own internal loader.
+Only reliable fix is output buffering to strip the script tag from final HTML:
+```php
+# wp-content/mu-plugins/sacredthreads-brand.php (or any mu-plugin)
+add_action('template_redirect', function() {
+    if (!is_singular('product')) return;
+    ob_start(function($html) {
+        $html = preg_replace('/<script[^>]+id="wc-flexslider-js"[^>]*>.*?<\/script>/is', '', $html);
+        $html = preg_replace('/<script[^>]+id="wc-single-product-js"[^>]*>.*?<\/script>/is', '', $html);
+        return $html;
+    });
+});
+```
+Without flexslider JS, WooCommerce gallery falls back to plain HTML — image displays naturally.
+Also add JS fallback in `wp_footer` to force `position:static` on gallery images in case other
+JS runs after the ob_start strip.
+
 **Upload product images via WP-CLI**
 ```bash
 # Step 1: import image to media library and attach to product
@@ -156,6 +175,78 @@ $WP media regenerate --yes
 
 Note: setting `_thumbnail_id` post meta directly does NOT work with WooCommerce block themes.
 Always use `wc product update --images` to set the product image.
+
+**WooCommerce "Coming Soon" mode — check first**
+New WooCommerce installs default to `woocommerce_coming_soon = yes`, which renders a blank
+white page for ALL store pages (shop, product, cart). Check and disable before debugging
+anything else:
+```bash
+$WP option get woocommerce_coming_soon        # should be "no"
+$WP option update woocommerce_coming_soon no  # disable if yes
+```
+
+**Block Cart/Checkout/My Account — replace with classic shortcodes**
+WooCommerce 8+ defaults to Gutenberg Block versions of Cart, Checkout, and My Account.
+These depend on React + REST API + AJAX and do NOT work on PHP built-in server.
+Replace page content with classic shortcodes:
+```bash
+$WP post update <cart_page_id>       --post_content='[woocommerce_cart]'
+$WP post update <checkout_page_id>   --post_content='[woocommerce_checkout]'
+$WP post update <myaccount_page_id>  --post_content='[woocommerce_my_account]'
+
+# Get page IDs:
+$WP option get woocommerce_cart_page_id
+$WP option get woocommerce_checkout_page_id
+$WP option get woocommerce_myaccount_page_id
+```
+Classic shortcodes render server-side and work on PHP built-in server without REST API.
+
+**Enable redirect to cart after Add to Cart**
+By default WooCommerce stays on the product page after adding to cart (AJAX add).
+AJAX also fails on PHP built-in server. Enable redirect:
+```bash
+$WP option update woocommerce_cart_redirect_after_add yes
+```
+
+**Apply brand styles via must-use plugin**
+To override Storefront's default styling globally (all pages: shop, product, cart, checkout,
+my account, footer), use a must-use plugin instead of child theme or Customizer — it loads
+automatically and survives theme updates:
+```
+wp-content/mu-plugins/brand.php
+```
+Use `add_action('wp_head', function() { ?><style>...</style><?php }, 99)` to inject CSS after
+all theme stylesheets. Target body classes for page-specific overrides:
+- `body.single-product` — product detail pages
+- `body.woocommerce-cart` — cart page
+- `body.woocommerce-checkout` — checkout page
+- `body.woocommerce-account` — my account
+- `body.tax-product_cat`, `body.post-type-archive-product` — shop/archive
+
+Key CSS targets for Storefront brand override:
+```css
+.site-header .site-title a   /* brand name */
+.main-navigation ul li a     /* nav links */
+.site-header-cart a          /* cart link in header */
+.woocommerce ul.products li.product .woocommerce-loop-product__title  /* shop card title */
+button.single_add_to_cart_button  /* product page CTA */
+#place_order                 /* checkout submit */
+.woocommerce-MyAccount-navigation ul li a  /* account sidebar */
+```
+
+**Custom brand homepage (editorial landing page)**
+To replace the default WooCommerce shop homepage with a full custom brand landing page:
+1. Create a Storefront page template: `wp-content/themes/storefront/page-<slug>.php`
+   - Output custom HTML/CSS inside WordPress's `wp_head()` / `wp_footer()` wrapper
+   - Use `get_permalink($product_id)` and `wp_get_attachment_url($attach_id)` for dynamic URLs
+   - Use `home_url('/?add-to-cart=ID')` for cart links — WooCommerce session works normally
+2. Create a WordPress page with slug matching the template filename:
+   ```bash
+   HOME_ID=$($WP post create --post_type=page --post_title="Home" --post_name="<slug>" --post_status=publish --porcelain)
+   $WP option update show_on_front page
+   $WP option update page_on_front $HOME_ID
+   ```
+3. Hide Storefront's default header/footer on this page via CSS body class targeting.
 
 ### 2b. Publish via REST API (remote stores)
 
