@@ -234,19 +234,143 @@ button.single_add_to_cart_button  /* product page CTA */
 .woocommerce-MyAccount-navigation ul li a  /* account sidebar */
 ```
 
-**Custom brand homepage (editorial landing page)**
-To replace the default WooCommerce shop homepage with a full custom brand landing page:
-1. Create a Storefront page template: `wp-content/themes/storefront/page-<slug>.php`
-   - Output custom HTML/CSS inside WordPress's `wp_head()` / `wp_footer()` wrapper
-   - Use `get_permalink($product_id)` and `wp_get_attachment_url($attach_id)` for dynamic URLs
-   - Use `home_url('/?add-to-cart=ID')` for cart links — WooCommerce session works normally
-2. Create a WordPress page with slug matching the template filename:
-   ```bash
-   HOME_ID=$($WP post create --post_type=page --post_title="Home" --post_name="<slug>" --post_status=publish --porcelain)
-   $WP option update show_on_front page
-   $WP option update page_on_front $HOME_ID
-   ```
-3. Hide Storefront's default header/footer on this page via CSS body class targeting.
+**Remove sidebar on all WooCommerce pages (correct method)**
+`storefront_sidebar` is NOT a real action hook — do NOT use `remove_action('storefront_sidebar', ...)`.
+The only reliable method is two filters together:
+```php
+add_filter('body_class', function ($classes) {
+    $is_wc = function_exists('is_woocommerce') && (is_woocommerce() || is_cart() || is_checkout() || is_account_page());
+    if ($is_wc || is_front_page()) {
+        $classes[] = 'storefront-full-width-content';
+    }
+    return $classes;
+});
+add_filter('is_active_sidebar', function ($is_active, $index) {
+    if ($index === 'sidebar-1') {
+        $is_wc = function_exists('is_woocommerce') && (is_woocommerce() || is_cart() || is_checkout() || is_account_page());
+        if ($is_wc || is_front_page()) return false;
+    }
+    return $is_active;
+}, 10, 2);
+```
+`storefront-full-width-content` body class triggers Storefront's own full-width layout.
+`is_active_sidebar` returning false prevents the sidebar widget area from rendering.
+Both are required — one alone is insufficient.
+
+**Replace WooCommerce product gallery (custom PHP gallery)**
+WooCommerce's default gallery uses flexslider which fails on PHP built-in server (opacity:0,
+images never visible). The correct approach is NOT `ob_start` stripping — instead, fully replace
+the gallery action with a custom PHP renderer. This also gives full styling control:
+```php
+// In mu-plugin: remove WC gallery, add custom one
+add_action('init', function () {
+    remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20);
+});
+add_action('woocommerce_before_single_product_summary', function () {
+    global $product;
+    if (!$product) return;
+    $attachment_ids = $product->get_gallery_image_ids();
+    $main_id        = $product->get_image_id();
+    if (!$main_id) return;
+    $main_src = wp_get_attachment_image_url($main_id, 'woocommerce_single');
+    $main_alt = get_post_meta($main_id, '_wp_attachment_image_alt', true) ?: get_the_title();
+    echo '<div class="woocommerce-product-gallery images">';  // keep class for Storefront float layout
+    echo '<div class="brand-gallery">';
+    echo '<div class="brand-gallery__main"><img id="brand-main-img" src="' . esc_url($main_src) . '" alt="' . esc_attr($main_alt) . '" /></div>';
+    if (!empty($attachment_ids)) {
+        echo '<div class="brand-gallery__thumbs">';
+        echo '<img src="' . esc_url(wp_get_attachment_image_url($main_id, 'thumbnail')) . '" data-full="' . esc_url($main_src) . '" class="active" />';
+        foreach ($attachment_ids as $id) {
+            echo '<img src="' . esc_url(wp_get_attachment_image_url($id, 'thumbnail')) . '" data-full="' . esc_url(wp_get_attachment_image_url($id, 'woocommerce_single')) . '" />';
+        }
+        echo '</div>';
+    }
+    echo '</div></div>';
+}, 20);
+// Thumb click JS in wp_footer (only on single product)
+add_action('wp_footer', function () {
+    if (!is_singular('product')) return;
+    echo '<script>document.addEventListener("DOMContentLoaded",function(){var m=document.getElementById("brand-main-img"),t=document.querySelectorAll(".brand-gallery__thumbs img");if(!m||!t.length)return;t.forEach(function(x){x.addEventListener("click",function(){m.src=x.dataset.full||x.src;t.forEach(function(y){y.classList.remove("active")});x.classList.add("active")})})});</script>';
+});
+```
+IMPORTANT: wrap the gallery in `<div class="woocommerce-product-gallery images">` — Storefront
+uses this class to apply `float:left; width:48%` for the two-column product layout.
+Also suppress WC's own gallery CSS/JS output:
+```css
+.woocommerce-product-gallery .woocommerce-product-gallery__wrapper { display: none !important; }
+.woocommerce-product-gallery .flex-control-nav,
+.woocommerce-product-gallery .flex-direction-nav,
+.woocommerce-product-gallery .woocommerce-product-gallery__trigger { display: none !important; }
+```
+
+**⚠️ Never use `sed` to edit PHP files with HTML attributes**
+`sed` regex that matches across HTML attributes (e.g. `s/class="foo".*attr="bar"/...`) will
+silently eat everything between the two matched attributes — including `src="..."` values.
+Always use the Edit tool (exact string match + replace) when modifying PHP template lines.
+
+**Custom brand homepage (editorial landing page) via shortcode**
+Preferred method: register a `[brand_landing]` shortcode in the mu-plugin, create a WordPress
+page, paste the shortcode, and set it as the static front page. Avoids page template file
+management and works with any theme:
+```php
+// In mu-plugin
+add_shortcode('brand_landing', function () {
+    ob_start(); ?>
+    <style>/* landing page styles */</style>
+    <div class="lp-root"><!-- landing page HTML --></div>
+    <?php return ob_get_clean();
+});
+```
+Then set the page as static front page:
+```bash
+HOME_ID=$($WP post create --post_type=page --post_title="Home" --post_status=publish --post_content='[brand_landing]' --porcelain)
+$WP option update show_on_front page
+$WP option update page_on_front $HOME_ID
+```
+
+**Full-bleed landing page (break out of Storefront container)**
+Storefront constrains `.entry-content` to a fixed column width. To make the shortcode full-viewport-width:
+```css
+/* 1. Hide Storefront's own header on the homepage */
+.home .site-header { display: none !important; }
+
+/* 2. Strip page scaffolding */
+.home .entry-header, .home .page-header { display: none !important; }
+.home .site-content { padding: 0 !important; margin: 0 !important; }
+.home .site-content > .col-full { padding: 0 !important; max-width: 100% !important; width: 100% !important; }
+.home .hentry { margin: 0 !important; }
+.home .entry-content { padding: 0 !important; margin: 0 !important; }
+.home .site-footer { display: none !important; }
+
+/* 3. True full-viewport-width for the root element */
+.home .lp-root {
+  position: relative;
+  left: 50%;
+  margin-left: -50vw !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  overflow-x: hidden;
+}
+```
+Build the landing page's own nav inside the shortcode HTML (sticky, z-index:100).
+The full-bleed trick works because `.entry-content` has `overflow: visible` in Storefront.
+
+**Brand VI design patterns (proven)**
+
+*Dark Gallery VI* — for jewellery, art, luxury goods. Dark background makes product colours pop:
+- Background: `#111111` / `#1c1c1c` surface
+- Text: `#e8e2d9` warm off-white
+- Accent: `#c9a84c` gold → `#e8c96a` hover
+- Typography: Cormorant Garamond (serif, light weight) + Inter (sans, UI)
+- Buttons: gold fill `#c9a84c`, square corner, uppercase 0.18em tracking
+- Cards: no border, `opacity` hover transition, tight `2px` grid gaps
+
+*Paper & Cutout VI* — for handmade, craft, artisan. Warm parchment, editorial stamp feel:
+- Background: `#f5e6c8` parchment / `#fdf6e3` cream
+- Ink: `#1a1a2e` deep navy
+- Accents: `#d44444` red, `#1a4a8a` blue, `#f0c040` yellow
+- Typography: Bebas Neue (display) + Space Mono (body)
+- Buttons: yellow fill + `4px 4px 0 var(--red)` offset shadow, slight rotation
 
 ### 2b. Publish via REST API (remote stores)
 
