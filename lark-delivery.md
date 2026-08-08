@@ -50,14 +50,26 @@ lark-cli docs +create \
 
 ## Set public link access
 
-`permission.public patch` does **NOT support `--type folder`** — folder is not in the enum.
-Set permissions file-by-file only.
+`permission.public patch` does **NOT support `--type folder`** — folder is not in the enum,
+and the raw API (`/open-apis/drive/v1/permissions/.../public`) also rejects `type=folder`
+with error 99992402. This is a Feishu product-level restriction. Set permissions file-by-file,
+or set manually in the Feishu UI.
 
-For each file (PDF) and docx:
+For each file (PDF) and docx, **two calls are required** — one-shot `anyone_readable` fails
+with error 1063001:
+
 ```bash
+# Step 1: enable external access first
 lark-cli drive permission.public patch \
   --token <file_token> \
-  --type file   # or: docx / sheet / bitable / slides
+  --type file \
+  --data '{"external_access":true,"link_share_entity":"tenant_readable"}' \
+  --yes
+
+# Step 2: now set anyone_readable
+lark-cli drive permission.public patch \
+  --token <file_token> \
+  --type file \
   --data '{"external_access":true,"link_share_entity":"anyone_readable"}' \
   --yes
 ```
