@@ -86,6 +86,18 @@ without a reason.
 The report is complete when all five sections are present and the verdict is a single actionable
 sentence.
 
+## Handoff → Parrot
+
+After the scout report is done, pass these three things to `parrot/brand-story` or `parrot/product-copy`:
+
+```
+Winning angle:   [one line from scout report]
+Buyer pain points: [top 2–3 bullets]
+Price point:     [validated range from Etsy]
+```
+
+This gives Parrot the market context it needs to write on-target copy without guessing.
+
 ## Notes
 
 **Reddit**: works without login.

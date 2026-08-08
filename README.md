@@ -47,3 +47,34 @@ AI-powered cross-border brand system for handmade & independent sellers.
 
 ## 9.9 Intro Guide
 ¥9.9 跨境实战资料包 — Parrot 模块配套入门教程，主图改造 + Brand OS 系统导览
+
+## Workflow Docs
+
+Reference docs for recurring operational tasks (not skills — these are process guides):
+
+| File | Purpose |
+|------|---------|
+| [`lark-delivery.md`](lark-delivery.md) | Feishu client delivery — folder structure, upload, docs creation, public link permissions |
+| [`pdf-report.md`](pdf-report.md) | HTML→PDF via Puppeteer + Replicate gpt-image-2 hero photo generation |
+
+## Chain Guide
+
+Full pipeline from zero to live:
+
+```
+Hound/market-scout       ← pick category
+      ↓ (winning angle + pain points + price)
+Parrot/brand-story       ← brand name, tagline, voice
+Parrot/product-copy      ← hook, bullets, story, specs
+      ↓
+Rabbit/*-listing         ← publish to WooCommerce / Etsy / Shopify / Amazon / Ozon
+Parrot/ai-hero-photo     ← product images (apparel: dual-input; other: Replicate direct)
+      ↓
+Bee/audience-finder      ← buyer persona + platform targeting
+Bee/ad-creative-brief    ← image/video brief + copy variants
+Bee/campaign-plan        ← 3-phase plan with ROAS targets
+      ↓
+Elephant/sales-review    ← weekly review → identify issues → fix with relevant skill
+Elephant/review-manager  ← monitor + respond to reviews
+Elephant/retention       ← re-engage past buyers
+```

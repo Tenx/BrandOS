@@ -6,6 +6,8 @@ description: >
   "云途", "YunExpress", "运单", "待发货", or any mention of fulfilling / shipping Hazumi orders.
 ---
 
+# Yun Delivery
+
 Ship open Etsy orders to YunExpress. Every run is a **fulfillment loop**: list → confirm → submit → record.
 
 Scripts live in `/Users/I742076/.claude/projects/hazumi/fulfillment/`.
