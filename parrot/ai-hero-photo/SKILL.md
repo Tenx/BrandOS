@@ -101,3 +101,12 @@ python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
 **生成太慢？** Replicate gpt-image-2 正常 2-5 分钟。加 `--quality standard` 可加速（默认 `auto`）
 
 **图片模糊？** 运行后用 Upscayl 4× 放大（免费，https://upscayl.org）
+
+## 适用范围
+
+本 skill 专为**服装/上身类**产品设计（双图输入：模特参考 + 服装平铺）。
+
+**非服装类产品**（珠宝、配饰、手工艺品、摆件等）用不上模特参考图，改用 **Replicate 直调方案**：
+- 4 视角：平铺 / 生活方式 / 戏剧暗调 / 多款陈列
+- 脚本模板见 `pdf-report.md` → "Hero Photo Generation" 章节
+- Token 读取：`~/.ai-hero-photo/config.json` → `replicate_api_token`
