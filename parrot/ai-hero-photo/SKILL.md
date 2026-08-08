@@ -110,3 +110,24 @@ python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
 - 4 视角：平铺 / 生活方式 / 戏剧暗调 / 多款陈列
 - 脚本模板见 `pdf-report.md` → "Hero Photo Generation" 章节
 - Token 读取：`~/.ai-hero-photo/config.json` → `replicate_api_token`
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "parrot": {
+    "hero_photos": {
+      "method": "dual-input (apparel) | replicate-direct (non-apparel)",
+      "files": [
+        "output/look_1_full_front.png",
+        "output/look_2_waist_up.png",
+        "output/look_3_back.png",
+        "output/look_4_detail.png"
+      ],
+      "collage": "output/collage.png"
+    }
+  }
+}
+```

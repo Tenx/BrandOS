@@ -115,3 +115,21 @@ Meta description: [≤160 chars]
 
 Report is complete when title, body_html, and SEO fields are filled. If API token exists,
 report is complete only after draft product URL is confirmed.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "rabbit": {
+    "shopify": {
+      "product_id": "string (if published)",
+      "handle": "string",
+      "title": "string",
+      "status": "draft | active",
+      "url": "https://<shop>.myshopify.com/products/..."
+    }
+  }
+}
+```

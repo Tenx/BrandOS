@@ -54,6 +54,8 @@ Reference docs for recurring operational tasks (not skills — these are process
 
 | File | Purpose |
 |------|---------|
+| [`pipeline.md`](pipeline.md) | **Full pipeline entry point** — step-by-step from market research to live listing, with context.json handoffs |
+| [`context-schema.md`](context-schema.md) | **Brand context.json template** — persistent state file shared across all skills in a pipeline run |
 | [`lark-delivery.md`](lark-delivery.md) | Feishu client delivery — folder structure, upload, docs creation, public link permissions |
 | [`pdf-report.md`](pdf-report.md) | HTML→PDF via Puppeteer + Replicate gpt-image-2 hero photo generation |
 

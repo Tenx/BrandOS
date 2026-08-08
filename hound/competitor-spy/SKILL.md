@@ -98,3 +98,23 @@ Do not retry the same URL. Instead:
 
 Report is complete when all six sections are filled and "how to beat them" is a single
 concrete action, not a vague suggestion.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "hound": {
+    "competitor": {
+      "shop_name": "string",
+      "price_range": { "low": 0, "high": 0, "currency": "USD" },
+      "what_they_do_well": ["strength 1", "strength 2"],
+      "gaps": ["weakness 1", "weakness 2"],
+      "visual_style": "flat lay | lifestyle | model | minimal",
+      "their_keywords": ["keyword1", "keyword2"],
+      "how_to_beat": "one concrete positioning move"
+    }
+  }
+}
+```

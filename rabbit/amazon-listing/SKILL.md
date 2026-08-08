@@ -118,3 +118,21 @@ Module 3 — Features: [3 × icon + caption]
 
 Report is complete when title, all 5 bullets, description, and backend search terms are
 filled and policy flags section is checked.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "rabbit": {
+    "amazon": {
+      "asin": "string (if published)",
+      "title": "string",
+      "bullet_points": ["bullet1", "bullet2", "bullet3", "bullet4", "bullet5"],
+      "backend_keywords": "string",
+      "status": "draft | submitted"
+    }
+  }
+}
+```

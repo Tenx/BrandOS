@@ -76,3 +76,20 @@ opencli browser main extract
 
 Report is complete when all five sections are filled and the recommendation names a
 specific action or timeframe.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "hound": {
+    "trend": {
+      "direction": "rising | stable | cooling",
+      "peak_months": ["month1", "month2"],
+      "launch_window": "description of best timing",
+      "recommendation": "launch now | wait until [month] | skip this cycle"
+    }
+  }
+}
+```

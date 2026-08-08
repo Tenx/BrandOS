@@ -133,3 +133,32 @@ Blended ROAS: [X]× — [above / at / below break-even]
 
 Report is complete when all products are tiered and top 3 actions name specific skills
 or steps to execute.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "elephant": {
+    "sales_review": {
+      "period": "last_7d | last_30d | last_90d",
+      "total_revenue": 0,
+      "total_orders": 0,
+      "aov": 0,
+      "blended_roas": 0,
+      "tiers": {
+        "A": ["product1"],
+        "B": ["product2"],
+        "C": ["product3"],
+        "D": ["product4"]
+      },
+      "top_actions": [
+        "action 1 → skill to use",
+        "action 2 → skill to use",
+        "action 3 → skill to use"
+      ]
+    }
+  }
+}
+```

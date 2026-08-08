@@ -87,3 +87,20 @@ python3 fulfill.py --track --order-no YT<waybill_number>
 ```
 
 **Shipping routes** → [ROUTES.md](ROUTES.md)
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "rabbit": {
+    "yun_delivery": {
+      "orders_shipped": 0,
+      "waybill_numbers": ["waybill1", "waybill2"],
+      "carrier": "YunExpress",
+      "shipped_at": "YYYY-MM-DD"
+    }
+  }
+}
+```

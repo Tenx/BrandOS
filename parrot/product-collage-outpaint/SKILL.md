@@ -103,3 +103,20 @@ Default `--target auto` keeps source clarity by avoiding forced upscale to `1080
 ## References
 
 Read `references/pipeline-notes.md` when changing the workflow or tuning thresholds.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "parrot": {
+    "product_images": {
+      "source_collage": "/path/to/source.png",
+      "output_dir": "/path/to/output/",
+      "files": ["image_01.png", "image_02.png"],
+      "count": 0
+    }
+  }
+}
+```
