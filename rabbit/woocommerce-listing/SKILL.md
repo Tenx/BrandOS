@@ -429,3 +429,187 @@ Meta description: [≤160 chars]
 
 Report is complete when name, short description, and full description are filled.
 If credentials / WP-CLI available, report is complete only after draft product ID is confirmed.
+
+---
+
+## New Learnings (2026-08-08)
+
+### WP-CLI shell quoting → Python subprocess
+
+Multi-line `--description` HTML in bash heredoc causes `parse error near '\n'`. **Never pass
+multi-line HTML as a shell argument.** Instead, write a Python script and call WP-CLI via
+`subprocess.run()` with a list of args (no shell interpolation):
+
+```python
+#!/usr/bin/env python3
+import subprocess, sys
+
+WP_BIN = "/opt/homebrew/bin/wp"
+WP_PATH = "/path/to/wordpress"
+
+DESCRIPTION = """<p>Long HTML description...</p>"""
+
+cmd = [
+    "php", "-d", "memory_limit=512M", "-d", "error_reporting=E_ALL&~E_DEPRECATED",
+    WP_BIN, f"--path={WP_PATH}",
+    "wc", "product", "create",
+    "--name=Product Name",
+    "--type=simple",
+    "--status=draft",
+    "--regular_price=19.99",
+    f"--description={DESCRIPTION}",
+    "--user=admin",
+]
+
+result = subprocess.run(cmd, capture_output=True, text=True)
+print(result.stdout[-500:] if result.stdout else "")
+print(result.stderr[-500:] if result.stderr else "", file=sys.stderr)
+sys.exit(result.returncode)
+```
+
+Run with `python3 /tmp/create_product.py`. The two-step pattern (create + update) still applies
+for long descriptions — write description via `wc product update` after creation.
+
+**Also**: `EXIT_CODE 126` on `WP="php ... /opt/homebrew/bin/wp"` shell variable — the `&~`
+in `error_reporting=E_ALL&~E_DEPRECATED` is interpreted as shell background + bitwise by zsh.
+Always run the full `php -d ... wp ...` command inline or via Python subprocess.
+
+### Storefront header-hero background gap ("米白缝")
+
+**Root cause**: Storefront sets `.site-main { padding-top: 4.235801032em }` inside a `@media`
+query. ANY external CSS `!important` override loses to the media query cascade — including
+`wp_add_inline_style` rules. This gap appears between the navy site header and a navy hero
+section on the homepage.
+
+**Incorrect approaches (all fail)**:
+- `body.home .site-main { padding-top: 0 !important }` — media query wins
+- `add_filter('body_class', ...)` to add a custom class then target it — still external
+- `ob_start` to strip `<header class="entry-header">` — helps with title, not the padding gap
+
+**Working fix (two-part)**:
+
+Part 1 — Paint all Storefront content wrappers with the brand background color via
+`wp_add_inline_style('storefront-style', ...)` (priority 99, runs after Storefront loads):
+```php
+add_action('wp_enqueue_scripts', function() {
+    if (is_front_page()) {
+        wp_add_inline_style('storefront-style',
+            'body.home #content,' .
+            'body.home #primary,' .
+            'body.home #main,' .
+            'body.home .site-content,' .
+            'body.home article.hentry {background:var(--brand-color)!important}' .
+            'body.home .entry-content{max-width:100%!important;padding:0!important}' .
+            'body.home #content .col-full{padding:0!important;max-width:100%!important}' .
+            'body.home .hentry{margin:0!important}'
+        );
+    }
+}, 99);
+```
+
+Part 2 — In the hero section HTML, use negative margin to extend upward and cover the gap:
+```html
+<section style="background:var(--brand-color);
+  margin: -100px -9999px 0;
+  padding: 80px 9999px 60px;">
+  <!-- hero content -->
+</section>
+```
+
+The `-100px` top margin pulls the hero up to cover the Storefront padding area. The `9999px`
+horizontal padding + negative margin is the standard full-bleed trick. Both parts are needed:
+the background-paint makes the gap color match; the negative margin covers it visually.
+
+**Key insight**: `wp_add_inline_style('storefront-style', ...)` injects CSS after Storefront's
+stylesheet in the same `<style>` block — this IS more specific than external `<link>` rules,
+but still loses to Storefront's `@media` query. Use it only for rules NOT inside a media query
+(like `background`, `max-width`, `padding`), NOT for `padding-top` on `.site-main`.
+
+### Product gallery double-rendering fix
+
+`remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20)`
+at plugin top level is NOT reliable — WooCommerce re-registers it after plugin load. Always use:
+
+```php
+// Both are required
+remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20);
+add_action('init', function() {
+    remove_action('woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20);
+}, 99);
+
+// Also dequeue all WC gallery scripts to prevent WC JS from interfering
+add_action('wp_enqueue_scripts', function() {
+    wp_dequeue_script('flexslider');
+    wp_dequeue_script('wc-single-product');
+    wp_dequeue_script('wc-add-to-cart-variation');
+    wp_dequeue_style('photoswipe');
+    wp_dequeue_style('photoswipe-default-skin');
+    wp_dequeue_script('photoswipe');
+    wp_dequeue_script('photoswipe-ui-default');
+    wp_dequeue_script('wc-single-product');
+    wp_dequeue_script('zoom');
+}, 99);
+```
+
+Without both the `init`-hook removal AND script dequeue, WooCommerce renders its default gallery
+alongside the custom one, producing a double-gallery layout.
+
+### `wc product_cat create` — remove `--format` flag
+
+`wp wc product_cat create` does not accept `--format=json`. Remove that flag; the command
+returns the category ID as plain text. Use `--porcelain` if you only want the ID.
+
+### MySQL credentials for local WooCommerce installs
+
+The local test MySQL uses the system user, not `root`. Check `wp-config.php` of an existing
+site for working credentials. For this machine: user `I742076`, password `wootest`,
+host `127.0.0.1`. `root` access is denied on this MySQL setup.
+
+### Third VI pattern: Parchment × Navy × Red (ShenBox)
+
+*Parchment × Navy × Red VI* — for folk craft, spiritual goods, Chinese cultural products:
+- Background: `#f5f0e8` warm parchment
+- Navy: `#1a1f5e` deep navy (header, footer, primary sections)
+- Red: `#c8102e` traditional red (product titles, CTA buttons, label strips)
+- Gold: `#b8860b` dark goldenrod (hover states, accent text)
+- Border: `#e0d8cc` subtle warm gray
+- Typography: Noto Serif SC or serif stack (display) + Inter (body)
+- Buttons: red fill `#c8102e`, white text, navy hover
+- Header: full-width navy band with white wordmark + red accent
+
+### Cloudflare Tunnel — share local WooCommerce with client (zero config)
+
+`cloudflared` is the best option for temporary client demos — no account needed, HTTPS instant.
+
+```bash
+# 1. Start tunnel (runs in background)
+cloudflared tunnel --url http://localhost:8091 &
+# Note the generated URL: https://xxxx-xxxx.trycloudflare.com
+
+# 2. Update WordPress to use tunnel URL
+WP="php -d memory_limit=512M -d error_reporting=E_ALL&~E_DEPRECATED /opt/homebrew/bin/wp --path=/path/to/wordpress"
+$WP option update siteurl "https://xxxx-xxxx.trycloudflare.com"
+$WP option update home    "https://xxxx-xxxx.trycloudflare.com"
+```
+
+Add this to `wp-config.php` (after DB_HOST line) so WordPress trusts Cloudflare's HTTPS header —
+without it, WP detects the local PHP server as HTTP and enters an infinite redirect loop:
+```php
+// Cloudflare tunnel HTTPS passthrough
+if ( isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https' ) {
+    $_SERVER['HTTPS'] = 'on';
+}
+```
+
+**Restore after demo:**
+```bash
+$WP option update siteurl "http://localhost:8091"
+$WP option update home    "http://localhost:8091"
+kill %1  # stop cloudflared
+# Remove the HTTPS snippet from wp-config.php
+```
+
+**Notes:**
+- Tunnel URL changes on every restart (no fixed domain without a Cloudflare account)
+- Pretty permalinks work fine through the tunnel
+- `?p=ID` redirects to `?product=slug` as normal — follow the redirect
