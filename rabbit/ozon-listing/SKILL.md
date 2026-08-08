@@ -183,3 +183,20 @@ Block 3: [icon concept + caption]
 
 Report is complete when name, description, short description, and all mandatory attributes
 are filled. Flag missing attributes before attempting API publish.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "rabbit": {
+    "ozon": {
+      "product_id": "string (if published)",
+      "name_ru": "string",
+      "category_id": 0,
+      "status": "draft | submitted"
+    }
+  }
+}
+```

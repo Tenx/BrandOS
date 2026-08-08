@@ -110,3 +110,25 @@ opencli browser main extract
 ```
 
 **Etsy**: uses `opencli browser` to fetch public search results — no token required.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "hound": {
+    "verdict": "enter | pass | enter with angle X",
+    "winning_angle": "one-line positioning summary",
+    "price_range": { "low": 0, "high": 0, "currency": "USD" },
+    "buyer_pain_points": ["pain 1", "pain 2", "pain 3"],
+    "top_keywords": ["keyword1", "keyword2", "keyword3"],
+    "platform_signals": {
+      "reddit": "subreddit + strongest post summary",
+      "instagram": "hashtag activity + dominant visual style",
+      "etsy": "top listing titles + competition density"
+    },
+    "risks": "one-line risk summary"
+  }
+}
+```

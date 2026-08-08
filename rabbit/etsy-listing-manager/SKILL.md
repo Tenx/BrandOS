@@ -82,3 +82,21 @@ Safety defaults:
 ## Project Integration
 
 Project `AGENTS.md` files should route Etsy work to `$etsy-listing-manager` and provide the shop profile path. Keep shop-specific variables in profiles, not in the skill. Project repositories should not keep duplicate copies of these Python scripts; only keep profiles, brand config, token/env files, listing content, image content, and reports.
+
+## Output Schema
+
+Fields written to `context.json` after this skill completes:
+
+```json
+{
+  "rabbit": {
+    "etsy": {
+      "listing_id": "string (if published)",
+      "title": "string",
+      "tags": ["tag1", "tag2"],
+      "status": "draft | active",
+      "url": "https://www.etsy.com/listing/..."
+    }
+  }
+}
+```
