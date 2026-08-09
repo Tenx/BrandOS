@@ -8,9 +8,9 @@ to the brand's `context.json` file — no copy-pasting between skills.
 For each new brand, create a context file first:
 
 ```bash
-BRAND=my-brand   # e.g. sumeru, shenbox
-mkdir -p ~/.claude/projects/brand-os/$BRAND
-cp context-schema.md ~/.claude/projects/brand-os/$BRAND/context.json
+BRAND=my-brand   # e.g. emotions, sumeru
+mkdir -p ~/.claude/projects/brand-os/customers/$BRAND
+cp context-schema.md ~/.claude/projects/brand-os/customers/$BRAND/context.json
 # Edit context.json: fill in "product" and "brand_dir" at minimum
 ```
 
@@ -55,14 +55,28 @@ Then:
 **Input from context.json**: `parrot.brand.voice`, `product.*`
 **Output to context.json**: `parrot.copy.*`
 
+> **Important**: After each skill run, manually write key outputs back to `context.json`
+> (`parrot.brand.name`, `parrot.brand.tagline`, `parrot.brand.voice`, `parrot.copy.hook`,
+> `parrot.copy.bullets`, etc.). Skills do not auto-update context.json.
+
 ---
 
 ### Step 3 — Hero Images (Parrot)
 
 **Apparel products**: `parrot/ai-hero-photo` (dual-input: model ref + garment)
-**All other products**: Replicate direct — see `pdf-report.md` → Hero Photo Generation
 
-**Output to context.json**: `parrot.hero_photos.*`
+**All other products** (incense, jewelry, home goods, etc.): write a custom `generate_hero.py` per brand.
+Template: `customers/sumeru/hero-photos/generate_jewelry.py` or `customers/emotions/hero-photos/generate_hero.py`
+
+Key pattern:
+```python
+# 1. Upload source product image via Replicate Files API (not base64)
+# 2. Define SHOTS list: [{"name": "01_flatlay", "prompt": "..."}, ...]
+# 3. Run predictions sequentially, save to output/
+```
+See `pdf-report.md` → Hero Photo Generation for full API reference.
+
+**Output**: save files to `customers/<brand>/hero-photos/output/`, then write paths to `context.json: parrot.hero_photos.files`
 
 ---
 
@@ -81,6 +95,13 @@ Choose platform:
 
 > **Default for new client demos**: Snipcart + static HTML → deploy Vercel.
 > WooCommerce local demo has too many rough edges; reserve for clients who specifically need WP.
+
+**Snipcart deployment checklist**:
+1. Build static `index.html` with `data-item-*` attributes on Add to Cart buttons
+2. Use Snipcart test API key during development
+3. Deploy to Vercel: `vercel --prod --yes --scope <team>`
+4. **Add deployed domain to Snipcart dashboard → Store configurations → Domains & URLs** (required or cart fails)
+5. Swap test key → live key when ready for real payments
 
 **Input from context.json**: `parrot.copy.*`, `parrot.hero_photos.files`
 **Output to context.json**: `rabbit.[platform].*`
@@ -128,8 +149,11 @@ lark-cli drive +create-folder --name "<Brand> · <产品名>" --folder-token <�
 ## Context File Location
 
 ```
-~/.claude/projects/brand-os/<brand-name>/context.json
+~/.claude/projects/brand-os/customers/<brand-name>/context.json
 ```
 
 Each skill reads the fields it needs and appends/updates its own section.
 Skills should never overwrite fields from other modules.
+
+> **Note**: Skills do not auto-write to context.json. After each step, manually update the
+> relevant section with key outputs before proceeding to the next step.
