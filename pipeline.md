@@ -70,13 +70,17 @@ Then:
 
 Choose platform:
 
-| Platform | Skill |
-|----------|-------|
-| WooCommerce | `rabbit/woocommerce-listing` |
-| Etsy | `rabbit/etsy-listing-manager` |
-| Shopify | `rabbit/shopify-listing` |
-| Amazon | `rabbit/amazon-listing` |
-| Ozon | `rabbit/ozon-listing` |
+| Platform | Skill | Best for |
+|----------|-------|---------|
+| **Snipcart + static HTML** | manual (no skill yet) | Client demos, fast deploys, Vercel |
+| WooCommerce | `rabbit/woocommerce-listing` | Clients who need WordPress |
+| Etsy | `rabbit/etsy-listing-manager` | Marketplace |
+| Shopify | `rabbit/shopify-listing` | Scaling DTC |
+| Amazon | `rabbit/amazon-listing` | Marketplace |
+| Ozon | `rabbit/ozon-listing` | Russia market |
+
+> **Default for new client demos**: Snipcart + static HTML → deploy Vercel.
+> WooCommerce local demo has too many rough edges; reserve for clients who specifically need WP.
 
 **Input from context.json**: `parrot.copy.*`, `parrot.hero_photos.files`
 **Output to context.json**: `rabbit.[platform].*`
