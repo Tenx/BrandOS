@@ -185,22 +185,36 @@ Shot 3 — Dramatic dark: black bg, single spotlight, silk fabric, smoke/incense
 Shot 4 — Variant spread: 5 items in arc/row, each different color, shows blind box variety
 ```
 
-## WooCommerce image attachment
+---
 
-```python
-# Import to media + attach to product (must cd into WP dir first)
-subprocess.run([
-    "php", "-d", "memory_limit=512M", "-d", "error_reporting=E_ALL&~E_DEPRECATED",
-    "/opt/homebrew/bin/wp",
-    "media", "import", "/abs/path/to/image.png",
-    "--title=product-image-name",
-    f"--post_id={product_id}",
-    "--porcelain",
-], cwd="/path/to/wordpress", ...)
+# Client Report Design System
 
-# Set as product images (use subprocess, NOT shell — bracket quoting breaks in zsh)
-subprocess.run([..., "wc", "product", "update", str(product_id),
-    "--user=admin",
-    '--images=[{"id":17},{"id":18},{"id":19},{"id":20}]',
-])
+## Typography & colour
+
+- **Fonts**: Cormorant Garamond (serif — titles, large numbers, italic pull-quotes) + Inter (body copy). Import via Google Fonts. Do NOT use Noto Serif SC.
+- **Colours**: Match the brand's own site VI exactly. Use the brand accent colour — do not default to generic teal/yellow.
+- **Base palette** (shared across all brands unless overridden):
+  ```css
+  --cream:  #f7f3ee;
+  --ink:    #1c1c1a;
+  --muted:  #7a756e;
+  --border: #e2dbd2;
+  --accent: <brand-specific>;   /* e.g. #8b6f5e for emotions */
+  ```
+
+## Content rules
+
+Reports are **client-facing**. Never mention internal implementation details:
+- ❌ Snipcart, Vercel, test keys, demo URLs, staging environments
+- ❌ Internal tool names (Brand OS module names are OK as a footer credit)
+- ✅ Strategy, audience, ROAS targets, creative brief, action steps
+
+## Feishu overwrite upload
+
+To update an already-delivered PDF without changing its public link:
+
+```bash
+cd /path/to/reports   # must cd first — never run lark-cli from brand-os root
+lark-cli drive +upload --file ./report.pdf --file-token <existing_file_token>
+# token stays the same; a new version is created
 ```
