@@ -613,3 +613,16 @@ kill %1  # stop cloudflared
 - Tunnel URL changes on every restart (no fixed domain without a Cloudflare account)
 - Pretty permalinks work fine through the tunnel
 - `?p=ID` redirects to `?product=slug` as normal — follow the redirect
+
+## When NOT to Use WooCommerce
+
+WooCommerce is production-ready but heavy for client demos — local setup has too many rough edges
+(flexslider opacity bugs, block/classic checkout incompatibility, PHP built-in server limitations).
+
+**For client demos, use Snipcart + static HTML instead:**
+- Add `data-item-*` attributes to any HTML button → instant cart/checkout
+- Deploy to Vercel — zero infrastructure, live link in minutes
+- Client can actually complete a test purchase
+- No PHP, no MySQL, no WP-CLI
+
+Reserve WooCommerce for clients who specifically need WordPress, or who already have a WP host.
