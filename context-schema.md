@@ -148,6 +148,28 @@ Each skill appends its own section — never edit another module's fields.
         { "name": "scale",      "duration_days": 0, "budget_usd": 0, "goal": "" }
       ],
       "kill_rules": []
+    },
+    "execution": {
+      "kol": {
+        "platform": "",
+        "candidates": [],
+        "messages_drafted": 0,
+        "follow_up_cadence_days": [0, 3, 7]
+      },
+      "email": {
+        "goal": "",
+        "recipients": [],
+        "sequence_days": [0, 3, 7],
+        "drafts_created": 0,
+        "sends_confirmed": 0
+      },
+      "ads": {
+        "platforms": [],
+        "scripts": [],
+        "phase1_daily_budget_usd": 0,
+        "break_even_roas": 0,
+        "enabled_by_human": false
+      }
     }
   },
 

@@ -110,14 +110,27 @@ Choose platform:
 
 ### Step 5 — Paid Traffic (Bee)
 
-Run in sequence:
+Run in sequence.
+
+**Strategy layer (方案):**
 
 1. `bee/audience-finder` → `context.json: bee.audience.*`
 2. `bee/ad-creative-brief` → `context.json: bee.creative.*`
 3. `bee/campaign-plan` → `context.json: bee.campaign.*`
 
-**Input**: `parrot.copy.*`, `rabbit.[platform].*`, `hound.price_range`
-**Key output**: `bee.campaign.break_even_roas`, `bee.campaign.phases`
+**Execution layer (半自动 — 生成脚本/草稿/清单，真实发送投放需人工确认):**
+
+4. `bee/kol-outreach` → discover creators, draft DMs/emails, stop before send → `bee.execution.kol.*`
+5. `bee/cold-email-sequence` → 3-email sequence, Gmail **drafts** (not sent) → `bee.execution.email.*`
+6. `bee/ad-launcher` → generate PAUSED-campaign launch scripts per platform → `bee.execution.ads.*`
+
+> **Semi-automatic red line**: execution skills draft everything and stop before the real action.
+> KOL DMs stop before Send; emails create Gmail drafts; ad scripts create PAUSED campaigns.
+> A human confirms and executes the final send / enable.
+
+**Input**: `parrot.copy.*`, `parrot.brand.*`, `rabbit.[platform].*`, `hound.price_range`,
+`bee.audience.*`, `bee.creative.*`, `bee.campaign.*`
+**Key output**: `bee.campaign.break_even_roas`, `bee.campaign.phases`, `bee.execution.*`
 
 ---
 
