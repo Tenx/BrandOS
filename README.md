@@ -48,6 +48,46 @@ AI-powered cross-border brand system for handmade & independent sellers.
 - [`elephant/review-manager`](elephant/review-manager) — Monitor reviews, reply to negatives, request reviews from satisfied buyers
 - [`elephant/retention`](elephant/retention) — Segment past buyers, draft re-engagement messages, suggest bundles, plan seasonal campaigns
 
+## Install
+
+Install any skill globally with `npx skills add`:
+
+```bash
+# Hound (① 嗅探犬) — product research & market validation
+npx skills add Tenx/BrandOS/hound/market-scout -g
+npx skills add Tenx/BrandOS/hound/competitor-spy -g
+npx skills add Tenx/BrandOS/hound/trend-timer -g
+
+# Parrot (② 鹦鹉) — brand story, content & visual identity
+npx skills add Tenx/BrandOS/parrot/brand-story -g
+npx skills add Tenx/BrandOS/parrot/product-copy -g
+npx skills add Tenx/BrandOS/parrot/social-post -g
+npx skills add Tenx/BrandOS/parrot/ai-hero-photo -g
+npx skills add Tenx/BrandOS/parrot/product-collage-outpaint -g
+
+# Rabbit (③ 兔子) — listing, SEO & publishing
+npx skills add Tenx/BrandOS/rabbit/etsy-listing-manager -g
+npx skills add Tenx/BrandOS/rabbit/shopify-listing -g
+npx skills add Tenx/BrandOS/rabbit/woocommerce-listing -g
+npx skills add Tenx/BrandOS/rabbit/amazon-listing -g
+npx skills add Tenx/BrandOS/rabbit/ozon-listing -g
+npx skills add Tenx/BrandOS/rabbit/yun-delivery -g
+
+# Bee (④ 蜜蜂) — paid traffic & distribution
+npx skills add Tenx/BrandOS/bee/audience-finder -g
+npx skills add Tenx/BrandOS/bee/ad-creative-brief -g
+npx skills add Tenx/BrandOS/bee/campaign-plan -g
+npx skills add Tenx/BrandOS/bee/kol-outreach -g
+npx skills add Tenx/BrandOS/bee/cold-email-sequence -g
+npx skills add Tenx/BrandOS/bee/ad-launcher -g
+
+# Elephant (⑤ 大象) — data review, fulfillment & retention
+npx skills add Tenx/BrandOS/elephant/customer-service -g
+npx skills add Tenx/BrandOS/elephant/sales-review -g
+npx skills add Tenx/BrandOS/elephant/review-manager -g
+npx skills add Tenx/BrandOS/elephant/retention -g
+```
+
 ## 9.9 Intro Guide
 ¥9.9 跨境实战资料包 — Parrot 模块配套入门教程，主图改造 + Brand OS 系统导览
 
