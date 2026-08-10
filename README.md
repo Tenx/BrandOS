@@ -38,6 +38,9 @@ AI-powered cross-border brand system for handmade & independent sellers.
 - [`bee/audience-finder`](bee/audience-finder) — Build buyer persona + platform targeting parameters for Meta, Pinterest, TikTok, Google Shopping
 - [`bee/ad-creative-brief`](bee/ad-creative-brief) — Generate image specs, video hooks, A/B copy variants per platform from product copy
 - [`bee/campaign-plan`](bee/campaign-plan) — ROAS-driven 3-phase campaign plan: budget allocation, bid strategy, kill rules, scale rules
+- [`bee/kol-outreach`](bee/kol-outreach) — Discover creators, tier them, draft personalized DMs/emails + follow-up sequence — semi-auto, stops before send
+- [`bee/cold-email-sequence`](bee/cold-email-sequence) — 3-email cold sequence with personalization → Gmail drafts (not sent) + follow-up tracking
+- [`bee/ad-launcher`](bee/ad-launcher) — Generate Meta/Google/TikTok/Pinterest Ads launch scripts (official SDKs + REST) — PAUSED campaigns, human enables
 
 ### Elephant (⑤ 大象) — Data review, fulfillment & retention
 - [`elephant/customer-service`](elephant/customer-service) — Cross-platform buyer messaging: Etsy, Amazon, Shopify — read, classify, draft, send
@@ -75,6 +78,10 @@ Parrot/ai-hero-photo     ← product images (apparel: dual-input; other: Replica
 Bee/audience-finder      ← buyer persona + platform targeting
 Bee/ad-creative-brief    ← image/video brief + copy variants
 Bee/campaign-plan        ← 3-phase plan with ROAS targets
+      ↓ (execution layer — 半自动, human confirms real send/launch)
+Bee/kol-outreach         ← discover creators, draft DMs/emails (stops before send)
+Bee/cold-email-sequence  ← 3-email sequence → Gmail drafts (not sent)
+Bee/ad-launcher          ← Meta/Google/TikTok/Pinterest launch scripts (PAUSED campaigns)
       ↓
 Elephant/sales-review    ← weekly review → identify issues → fix with relevant skill
 Elephant/review-manager  ← monitor + respond to reviews
