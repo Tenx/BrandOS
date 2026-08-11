@@ -2,8 +2,8 @@
 name: cold-email-sequence
 description: >
   Given a recipient list, design a 3-email cold outreach sequence, personalize with variables,
-  create Gmail drafts (not direct sends) for human review, and track follow-ups. Reuses the
-  gmail skill for drafting/sending. Semi-automatic: builds drafts, human confirms before send.
+  create Gmail drafts (not direct sends) for human review, and track follow-ups. Uses a Gmail
+  MCP server (create_draft) for drafting. Semi-automatic: builds drafts, human confirms before send.
   Use for creator gifting, wholesale/distribution, or partnership outreach by email.
   Triggers: "cold email", "邮件序列", "外联邮件", "群发邮件", "email sequence", "跟进邮件",
   "冷启动邮件", "批发邮件", "分销邮件", "email outreach", "follow-up email".
@@ -64,27 +64,38 @@ Every email must have at least one filled variable that is genuinely specific �
 
 ### 4. Gmail semi-automatic send (drafts first)
 
-Use the **gmail** skill's `draft` command to create Gmail **drafts** (never sends).
-This requires the `modify` scope — set it once, then re-auth:
+Create Gmail **drafts** (never sends) via a **Gmail MCP server**. The recommended server is
+[`@gongrzhe/server-gmail-autoauth-mcp`](https://github.com/gongrzhe/server-gmail-autoauth-mcp),
+which exposes a `create_draft` tool (and handles OAuth + any proxy itself).
 
-```bash
-# one-time: upgrade scope + re-authenticate
-python3 scripts/gmail_search.py scope --set modify
-python3 scripts/gmail_search.py auth
+Add it to the project's MCP config (`.mcp.json` or the project entry in `~/.claude.json`):
 
-# per recipient: write the personalized body to a temp file, then create a draft
-#   (body-file keeps newlines + variables intact)
-python3 scripts/gmail_search.py draft \
-  --to "creator@example.com" \
-  --subject "Quick idea for {{handle}}" \
-  --body-file /tmp/email1_<recipient>.txt
+```json
+{
+  "mcpServers": {
+    "gmail": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"]
+    }
+  }
+}
 ```
 
-- Create one draft per recipient (or small batches), variables already filled into the body file
+> If your network blocks direct access to `googleapis.com` (e.g. a corporate firewall), set an
+> `HTTPS_PROXY`/`HTTP_PROXY` in the server's `env` so the MCP can reach Gmail.
+
+Then, per recipient, call the MCP `create_draft` tool with the personalized fields:
+
+- `to`: recipient email
+- `subject`: personalized subject (e.g. `Quick idea for {{handle}}`)
+- `body`: the filled email body (variables already substituted)
+
+- Create one draft per recipient (or small batches), variables already filled in the body
 - Present the created draft IDs for human review
 - Only after explicit confirmation does the human send (from the Gmail UI)
 
-Default action is **draft**, never direct send. The gmail skill has no send path.
+Default action is **draft**, never direct send — use `create_draft`, never a send tool.
 
 ### 5. Follow-up tracking
 
@@ -120,7 +131,7 @@ Body: ...
 | {{first_name}} | ... | draft | — | — | drafted |
 
 ### gmail action
-Created [N] drafts via gmail skill (NOT sent). Review then confirm to send.
+Created [N] drafts via the Gmail MCP `create_draft` (NOT sent). Review then confirm to send.
 
 ### first action
 [e.g. "Review 3 drafts in Gmail → send batch 1 (10 max/day for new domain)"]
@@ -137,7 +148,8 @@ lists every recipient, and Gmail drafts are created (not sent).
 
 ## Reuses
 
-- **gmail** skill — draft/send/track. This skill orchestrates the sequence; gmail handles delivery.
+- **Gmail MCP** (`@gongrzhe/server-gmail-autoauth-mcp`) — `create_draft` for delivery. This skill
+  orchestrates the sequence; the MCP handles OAuth, proxy, and draft creation.
 
 ## Output Schema
 
