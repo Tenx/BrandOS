@@ -53,6 +53,16 @@ opencli browser main extract
 From each profile extract: `handle`, follower count, bio, external link, and any public email
 (often in bio or a "for business: …" line). Assemble a candidates table.
 
+**opencli discovery boundaries (verified on IG):**
+- A hashtag page usually needs **two `extract` calls** — the first often returns 0 rows / noise
+  while the grid lazy-loads; the second reliably yields post permalinks.
+- **Handles are reliably obtainable** from individual post pages (the `<name>'s profile picture`
+  alt-text pattern) and from post permalinks — this is the dependable signal.
+- **Follower counts and business emails are NOT reliably extractable** — the profile header is
+  JS-rendered and often absent from `extract`. Leave `followers` / `email` blank and mark them
+  `verify manually` in the candidates table rather than guessing. Tier/priority then lean on
+  niche relevance + post cadence until a human fills the numbers.
+
 **Path B — user-supplied list**
 
 Read the CSV/table the user provides. Expected columns (fill what's available):

@@ -166,6 +166,40 @@ Google: configure google-ads.yaml at the standard path.
 4. Script creates a PAUSED campaign + prints summary
 5. Review in the platform dashboard, attach creative, flip to ACTIVE manually
 
+### dry-run validation (no ad account, zero risk)
+Before touching a real ad account, verify a generated script reaches the create-campaign call
+with the right fields (PAUSED status, correct budget/ROAS) using **stubbed SDK/HTTP** — no real
+API calls, no spend. Verified this pattern on emotions' `launch_meta.py` + `launch_pinterest.py`.
+
+- **Meta (facebook-business)** — stub the SDK modules via `sys.modules` before import, feed fake
+  env tokens, and record the params passed to `create_campaign` / `create_ad_set`:
+  ```python
+  import sys, types, os
+  os.environ.update(META_ACCESS_TOKEN="x", META_AD_ACCOUNT_ID="act_x")
+  calls = []
+  fb = types.ModuleType("facebook_business")
+  api = types.ModuleType("facebook_business.api")
+  api.FacebookAdsApi = type("A", (), {"init": staticmethod(lambda *a, **k: None)})
+  acc = types.ModuleType("facebook_business.adobjects.adaccount")
+  class _AdAccount:
+      def __init__(self, *a): pass
+      def create_campaign(self, params): calls.append(("campaign", params)); return {"id": "c1"}
+      def create_ad_set(self, params): calls.append(("adset", params)); return {"id": "a1"}
+  acc.AdAccount = _AdAccount
+  sys.modules.update({"facebook_business": fb, "facebook_business.api": api,
+                      "facebook_business.adobjects.adaccount": acc})
+  exec(open("customers/<brand>/ads/launch_meta.py").read())
+  assert all(p.get("status") == "PAUSED" for _, p in calls)   # every object PAUSED
+  ```
+- **Pinterest / TikTok (REST via requests)** — monkeypatch `requests.post` to capture URL + JSON
+  body and return a canned `{"items":[{"data":{"id":"..."}}]}`; assert `status == "PAUSED"`
+  (Pinterest) / `operation_status == "DISABLE"` (TikTok) and budget matches Phase-1.
+- **Token guard check** — run the script with **no** env tokens set; it must raise `KeyError`
+  on `os.environ[...]` *before* any API call. This proves zero accidental spend on a misconfig.
+
+Pass criteria: script reaches create-campaign with `status=PAUSED`, budget/ROAS match
+`campaign-plan`, and missing tokens fail fast.
+
 ### first action
 [e.g. "Run launch_meta.py, verify PAUSED campaign + budget in Ads Manager"]
 ```

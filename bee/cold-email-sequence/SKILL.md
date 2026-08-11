@@ -3,7 +3,7 @@ name: cold-email-sequence
 description: >
   Given a recipient list, design a 3-email cold outreach sequence, personalize with variables,
   create Gmail drafts (not direct sends) for human review, and track follow-ups. Uses a Gmail
-  MCP server (create_draft) for drafting. Semi-automatic: builds drafts, human confirms before send.
+  MCP server (draft_email tool) for drafting. Semi-automatic: builds drafts, human confirms before send.
   Use for creator gifting, wholesale/distribution, or partnership outreach by email.
   Triggers: "cold email", "邮件序列", "外联邮件", "群发邮件", "email sequence", "跟进邮件",
   "冷启动邮件", "批发邮件", "分销邮件", "email outreach", "follow-up email".
@@ -64,9 +64,10 @@ Every email must have at least one filled variable that is genuinely specific �
 
 ### 4. Gmail semi-automatic send (drafts first)
 
-Create Gmail **drafts** (never sends) via a **Gmail MCP server**. The recommended server is
-[`@gongrzhe/server-gmail-autoauth-mcp`](https://github.com/gongrzhe/server-gmail-autoauth-mcp),
-which exposes a `create_draft` tool (and handles OAuth + any proxy itself).
+Create Gmail **drafts** (never sends) via a **Gmail MCP server**. Verified working:
+[`@gongrzhe/server-gmail-autoauth-mcp`](https://github.com/gongrzhe/server-gmail-autoauth-mcp).
+It handles OAuth + any proxy itself. **Note:** the actual draft tool name exposed is
+`draft_email` (surfaced as `mcp__gmail__draft_email`), not `create_draft`.
 
 Add it to the project's MCP config (`.mcp.json` or the project entry in `~/.claude.json`):
 
@@ -76,16 +77,24 @@ Add it to the project's MCP config (`.mcp.json` or the project entry in `~/.clau
     "gmail": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"]
+      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
+      "env": {
+        "HTTPS_PROXY": "http://127.0.0.1:10080",
+        "HTTP_PROXY": "http://127.0.0.1:10080",
+        "NO_PROXY": "localhost,127.0.0.1"
+      }
     }
   }
 }
 ```
 
-> If your network blocks direct access to `googleapis.com` (e.g. a corporate firewall), set an
-> `HTTPS_PROXY`/`HTTP_PROXY` in the server's `env` so the MCP can reach Gmail.
+> If your network blocks direct access to `googleapis.com` (e.g. a corporate firewall), the
+> `HTTPS_PROXY`/`HTTP_PROXY` env above routes the MCP through a local proxy to reach Gmail.
+> On an unrestricted network you can drop the `env` block. OAuth creds live in `~/.gmail-mcp/`.
+> After changing MCP config or refreshing credentials, **restart the client** — an
+> already-running MCP process holds its startup-time token and a mid-session kill won't reconnect.
 
-Then, per recipient, call the MCP `create_draft` tool with the personalized fields:
+Then, per recipient, call the MCP `draft_email` tool with the personalized fields:
 
 - `to`: recipient email
 - `subject`: personalized subject (e.g. `Quick idea for {{handle}}`)
@@ -95,7 +104,7 @@ Then, per recipient, call the MCP `create_draft` tool with the personalized fiel
 - Present the created draft IDs for human review
 - Only after explicit confirmation does the human send (from the Gmail UI)
 
-Default action is **draft**, never direct send — use `create_draft`, never a send tool.
+Default action is **draft**, never direct send — use `draft_email`, never a send tool.
 
 ### 5. Follow-up tracking
 
@@ -131,7 +140,7 @@ Body: ...
 | {{first_name}} | ... | draft | — | — | drafted |
 
 ### gmail action
-Created [N] drafts via the Gmail MCP `create_draft` (NOT sent). Review then confirm to send.
+Created [N] drafts via the Gmail MCP `draft_email` (NOT sent). Review then confirm to send.
 
 ### first action
 [e.g. "Review 3 drafts in Gmail → send batch 1 (10 max/day for new domain)"]
@@ -148,7 +157,7 @@ lists every recipient, and Gmail drafts are created (not sent).
 
 ## Reuses
 
-- **Gmail MCP** (`@gongrzhe/server-gmail-autoauth-mcp`) — `create_draft` for delivery. This skill
+- **Gmail MCP** (`@gongrzhe/server-gmail-autoauth-mcp`) — `draft_email` for delivery. This skill
   orchestrates the sequence; the MCP handles OAuth, proxy, and draft creation.
 
 ## Output Schema
