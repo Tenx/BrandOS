@@ -2,11 +2,19 @@
 """
 AI Hero Photo Generator
 =======================
-Upload a model reference photo + garment flat-lay → get 4-view professional fashion images.
+统一脚本：一次 API 出 2×2 合图 → 本地切 4 张。两种模式：
+
+  --mode garment   服装（默认）：双图输入（模特参考 + 平铺图）
+  --mode product   非服装（珠宝/香薰/摆件/食品等）：单图输入（产品实拍）
+
+两种模式都只调 1 次 API（省钱），本地切 2×2。
 
 Usage:
     python3 generate.py --setup                          # first-time config
-    python3 generate.py --model-ref x.jpg --garment y.jpg --product "奶油色钩织背心"
+    # 服装（双图）
+    python3 generate.py --mode garment --model-ref x.jpg --garment y.jpg --product "奶油色钩织背心"
+    # 非服装（单图实拍）
+    python3 generate.py --mode product --product-img incense.jpg --product "a ceramic incense holder"
     python3 generate.py ... --dry-run                    # preview prompt only
     python3 generate.py ... --style lifestyle            # change background style
     python3 generate.py ... --provider siliconflow       # use SiliconFlow instead of Replicate
@@ -101,12 +109,38 @@ def build_prompt(product: str, style: str = "minimal") -> str:
     )
 
 
+# 保真锁：放在 product prompt 开头，防止 AI 把产品重新设计跑偏（输入图是唯一真相）
+FIDELITY_LOCK = (
+    "Recreate the EXACT product shown in the input image with perfect fidelity — "
+    "preserve its true geometry, proportions, part count, materials, textures, "
+    "colors, and every physical detail. Do NOT redesign, stylize, beautify, "
+    "simplify, or invent any part. This is the same real product, photographed "
+    "in a new scene."
+)
+
+
+def build_product_prompt(product: str) -> str:
+    """非服装类：一次出 2×2 四视角合图，保真锁保证四格都是同一真实产品。"""
+    return (
+        f"{FIDELITY_LOCK} "
+        f"The product is {product}. "
+        f"Generate ONE square image composed of a 2×2 grid with four distinct "
+        f"professional ecommerce shots of this SAME product: "
+        f"(top-left) studio hero flat lay on light-grey seamless, soft diffused light; "
+        f"(top-right) atmospheric mood vignette with tasteful props (linen, ceramic, plant), warm intimate light; "
+        f"(bottom-left) gift close-up held in two clean hands over a soft blurred neutral background; "
+        f"(bottom-right) macro detail shot highlighting material and texture. "
+        f"Every one of the four cells shows the identical real product from the input image — "
+        f"only the scene, angle, and lighting change. "
+        f"Editorial, photorealistic, clean composition. No text, no logos, no watermarks."
+    )
+
+
 # ── Generation ───────────────────────────────────────────────────────────────
 
 def generate_with_replicate(
     prompt: str,
-    model_ref_path: Path,
-    garment_path: Path,
+    image_paths: list[Path],
     cfg: dict,
 ) -> bytes:
     try:
@@ -127,7 +161,8 @@ def generate_with_replicate(
     print(f"   🤖 模型：{model}")
     print(f"   ⏳ 生成中（约 2-5 分钟）...")
 
-    with open(model_ref_path, "rb") as f1, open(garment_path, "rb") as f2:
+    handles = [open(p, "rb") for p in image_paths]
+    try:
         input_params = {
             "prompt": prompt,
             "aspect_ratio": "1:1",   # 2×2 collage is square overall
@@ -135,11 +170,14 @@ def generate_with_replicate(
             "output_format": cfg.get("output_format", "png"),
             "number_of_images": 1,
             "moderation": "auto",
-            "input_images": [f1, f2],
+            "input_images": handles,
         }
         t0 = time.time()
         output = replicate_client.run(model, input=input_params)
         elapsed = time.time() - t0
+    finally:
+        for h in handles:
+            h.close()
 
     print(f"   ✅ 完成（{elapsed:.1f}s）")
 
@@ -155,8 +193,7 @@ def generate_with_replicate(
 
 def generate_with_siliconflow(
     prompt: str,
-    model_ref_path: Path,
-    garment_path: Path,
+    image_paths: list[Path],
     cfg: dict,
 ) -> bytes:
     try:
@@ -182,16 +219,19 @@ def generate_with_siliconflow(
     print(f"   🤖 模型：{model}")
     print(f"   ⏳ 生成中...")
 
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "image": to_b64(image_paths[0]),
+    }
+    if len(image_paths) > 1:
+        payload["image2"] = to_b64(image_paths[1])
+
     t0 = time.time()
     resp = requests.post(
         "https://api.siliconflow.cn/v1/images/generations",
         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        json={
-            "model": model,
-            "prompt": prompt,
-            "image": to_b64(model_ref_path),
-            "image2": to_b64(garment_path),
-        },
+        json=payload,
         timeout=300,
     )
     elapsed = time.time() - t0
@@ -210,7 +250,21 @@ def generate_with_siliconflow(
 
 # ── Collage split ─────────────────────────────────────────────────────────────
 
-def split_collage_2x2(image_data: bytes, output_dir: Path) -> list[Path]:
+GARMENT_NAMES = [
+    "look_1_full_front.png",
+    "look_2_waist_up.png",
+    "look_3_back.png",
+    "look_4_detail.png",
+]
+PRODUCT_NAMES = [
+    "shot_1_flatlay.png",
+    "shot_2_mood.png",
+    "shot_3_giftcloseup.png",
+    "shot_4_detail.png",
+]
+
+
+def split_collage_2x2(image_data: bytes, output_dir: Path, names: list[str]) -> list[Path]:
     try:
         from PIL import Image
         import io
@@ -225,12 +279,6 @@ def split_collage_2x2(image_data: bytes, output_dir: Path) -> list[Path]:
     w, h = img.size
     hw, hh = w // 2, h // 2
 
-    names = [
-        "look_1_full_front.png",
-        "look_2_waist_up.png",
-        "look_3_back.png",
-        "look_4_detail.png",
-    ]
     boxes = [
         (0,  0,  hw, hh),
         (hw, 0,  w,  hh),
@@ -256,21 +304,27 @@ def split_collage_2x2(image_data: bytes, output_dir: Path) -> list[Path]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="AI Hero Photo — 双图合成专业服装主图",
+        description="AI Hero Photo — 一次 API 出 2×2 合图 → 本地切 4 张（服装/非服装两模式）",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例：
   python3 generate.py --setup
-  python3 generate.py --model-ref model.jpg --garment vest.jpg --product "奶油色钩织背心"
-  python3 generate.py --model-ref model.jpg --garment vest.jpg --product "蓝色流苏网眼马甲" --style lifestyle --dry-run
+  # 服装（双图）
+  python3 generate.py --mode garment --model-ref model.jpg --garment vest.jpg --product "奶油色钩织背心"
+  python3 generate.py --mode garment --model-ref model.jpg --garment vest.jpg --product "蓝色流苏网眼马甲" --style lifestyle --dry-run
+  # 非服装（单图实拍）
+  python3 generate.py --mode product --product-img incense.jpg --product "a ceramic incense holder"
 """,
     )
     parser.add_argument("--setup", action="store_true", help="初始配置 API Token")
-    parser.add_argument("--model-ref", type=Path, help="模特参考图路径")
-    parser.add_argument("--garment", type=Path, help="服装平铺图路径")
-    parser.add_argument("--product", type=str, help="产品描述，如「奶油色钩织背心」")
+    parser.add_argument("--mode", choices=["garment", "product"], default="garment",
+                        help="garment=服装双图（默认）；product=非服装单图实拍")
+    parser.add_argument("--model-ref", type=Path, help="[garment] 模特参考图路径")
+    parser.add_argument("--garment", type=Path, help="[garment] 服装平铺图路径")
+    parser.add_argument("--product-img", type=Path, help="[product] 产品实拍图路径")
+    parser.add_argument("--product", type=str, help="产品描述：garment 用中文款式描述；product 用一句话英文品类，如 a ceramic incense holder")
     parser.add_argument("--style", choices=["minimal", "lifestyle", "outdoor"],
-                        default="minimal", help="背景风格（默认 minimal）")
+                        default="minimal", help="[garment] 背景风格（默认 minimal）")
     parser.add_argument("--provider", choices=["replicate", "siliconflow"],
                         default="replicate", help="API 渠道（默认 replicate）")
     parser.add_argument("--output-dir", type=Path, help="输出目录（默认当前目录/output）")
@@ -281,23 +335,38 @@ def main() -> None:
         setup_config()
         return
 
-    # Validate required args
-    missing = [f for f in ("model_ref", "garment", "product") if not getattr(args, f.replace("-", "_"))]
-    if missing:
-        parser.error(f"缺少参数：{', '.join('--' + m.replace('_', '-') for m in missing)}")
+    # 按 mode 分别校验参数
+    if args.mode == "garment":
+        missing = [f for f in ("model_ref", "garment", "product") if not getattr(args, f)]
+        if missing:
+            parser.error(f"[garment] 缺少参数：{', '.join('--' + m.replace('_', '-') for m in missing)}")
+        check_paths = [("--model-ref", args.model_ref), ("--garment", args.garment)]
+        image_paths = [args.model_ref, args.garment]
+        prompt = build_prompt(args.product, args.style)
+        names = GARMENT_NAMES
+    else:  # product
+        missing = [f for f in ("product_img", "product") if not getattr(args, f)]
+        if missing:
+            parser.error(f"[product] 缺少参数：{', '.join('--' + m.replace('_', '-') for m in missing)}")
+        check_paths = [("--product-img", args.product_img)]
+        image_paths = [args.product_img]
+        prompt = build_product_prompt(args.product)
+        names = PRODUCT_NAMES
 
-    for label, path in [("--model-ref", args.model_ref), ("--garment", args.garment)]:
+    for label, path in check_paths:
         if not path.exists():
             print(f"❌ 文件不存在：{label} {path}")
             sys.exit(1)
 
-    prompt = build_prompt(args.product, args.style)
-
     print("\n=== AI Hero Photo ===")
-    print(f"模特参考：{args.model_ref}")
-    print(f"服装图：  {args.garment}")
+    print(f"模式：    {args.mode}")
+    if args.mode == "garment":
+        print(f"模特参考：{args.model_ref}")
+        print(f"服装图：  {args.garment}")
+        print(f"背景风格：{args.style}")
+    else:
+        print(f"产品实拍：{args.product_img}")
     print(f"产品描述：{args.product}")
-    print(f"背景风格：{args.style}")
     print(f"API 渠道：{args.provider}")
     print(f"\nPrompt 预览：\n{prompt}\n")
 
@@ -313,19 +382,19 @@ def main() -> None:
     print(f"\n⏳ 开始生成...")
     try:
         if args.provider == "siliconflow":
-            image_data = generate_with_siliconflow(prompt, args.model_ref, args.garment, cfg)
+            image_data = generate_with_siliconflow(prompt, image_paths, cfg)
         else:
-            image_data = generate_with_replicate(prompt, args.model_ref, args.garment, cfg)
+            image_data = generate_with_replicate(prompt, image_paths, cfg)
     except Exception as e:
         print(f"\n❌ 生成失败：{e}")
         sys.exit(1)
 
     print(f"\n📂 保存到 {output_dir}/")
-    split_collage_2x2(image_data, output_dir)
+    split_collage_2x2(image_data, output_dir, names)
 
-    print(f"\n✅ 完成！共 4 张主图 + 1 张合图")
+    print(f"\n✅ 完成！共 4 张主图 + 1 张合图（1 次 API）")
     print(f"   路径：{output_dir.resolve()}")
-    print(f"\n💡 提示：用 Upscayl（免费）放大到 2000×2000px 再上传 Etsy")
+    print(f"\n💡 提示：每格约 512px，用 Upscayl（免费）放大再上传")
     print(f"   下载：https://upscayl.org\n")
 
 

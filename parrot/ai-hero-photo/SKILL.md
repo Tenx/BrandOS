@@ -1,18 +1,18 @@
 ---
 name: ai-hero-photo
-description: AI 主图生成：根据产品类型自动分支。服装类→双图输入（模特参考图+平铺图）；非服装类→单图输入（产品实拍）→生成并运行 generate_hero.py。支持 Replicate (openai/gpt-image-2)，国内可切换硅基流动。Use when the user wants to generate ecommerce hero images for any handmade or physical product.
+description: AI 主图生成：统一脚本 generate.py，用 --mode 切换。服装类→双图输入（模特参考图+平铺图）；非服装类→单图输入（产品实拍）。两模式都一次 API 出 2×2 合图→本地切 4 张。支持 Replicate (openai/gpt-image-2)，国内可切换硅基流动。Use when the user wants to generate ecommerce hero images for any handmade or physical product.
 ---
 
 # AI Hero Photo
 
-为任意实物产品生成专业电商主图，输出 4 张不同视角/场景的主图。
+用同一个 `generate.py` 为任意实物产品生成专业电商主图，输出 4 张不同视角/场景的主图。**两模式都一次 API 出 2×2 合图 → 本地切 4 张**（省钱）：
 
-根据产品类型自动走不同路径：
-
-| 产品类型 | 路径 | 输入 |
+| 产品类型 | 模式 | 输入 |
 |----------|------|------|
-| 服装 / 上身穿戴 | 双图合成 | 模特参考图 + 服装平铺图 |
-| 非服装（香薰、珠宝、摆件、食品等） | 单图直调 | 产品实拍图 |
+| 服装 / 上身穿戴 | `--mode garment`（默认） | 模特参考图 + 服装平铺图（双图） |
+| 非服装（香薰、珠宝、摆件、食品等） | `--mode product` | 产品实拍图（单图） |
+
+两种模式都只调 **1 次 API**，本地切 2×2（每格约 512px，可 Upscayl 放大）。
 
 ---
 
@@ -32,6 +32,7 @@ Token 存入 `~/.ai-hero-photo/config.json`。
 
 ```bash
 python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
+  --mode garment \
   --model-ref /path/to/model_reference.jpg \
   --garment  /path/to/garment_flatlay.jpg \
   --product  "奶油色钩织背心"
@@ -73,63 +74,45 @@ python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
 
 ---
 
-## 路径 B — 非服装类（单图直调）
+## 路径 B — 非服装类（单图实拍，同一脚本 `--mode product`）
 
-适用于：香薰、珠宝、摆件、食品、文创、家居等。
+适用于：香薰、珠宝、摆件、食品、文创、家居等。**用同一个 `generate.py`**，加 `--mode product`：单图输入 → 一次 API 出 2×2 四视角合图 → 本地切 4 张。**只调 1 次 API**（不再每 shot 一次，扣费与服装模式一致）。
 
 ### Step 1 — 准备产品实拍图
 
-一张清晰的产品照即可（JPG/PNG）。大于 4MB 用 Replicate Files API 上传，不用 base64。
+一张清晰的产品照即可（JPG/PNG）。
 
-### Step 2 — 生成 generate_hero.py
-
-根据品牌和产品特性，生成一个专属脚本，包含 4 个场景 shot：
-
-| Shot | 典型场景 |
-|------|----------|
-| `01_flatlay` | 平铺，暖色亚麻/大理石背景，柔和侧光 |
-| `02_mood_vignette` | 单品搭配道具（咖啡杯/书本/植物），氛围感 |
-| `03_gift_closeup` | 双手捧持或礼物场景，体现礼品感 |
-| `04_multi_sku_spread` | 多款陈列，产品目录感 |
-
-脚本模板（参考 `customers/emotions/hero-photos/generate_hero.py`）：
-
-```python
-PRODUCT_IMG = str(Path(__file__).parent.parent / "product-photos/<product>.jpg")
-OUT_DIR = Path(__file__).parent / "output"
-
-SHOTS = [
-    {"name": "01_flatlay",       "prompt": "..."},
-    {"name": "02_mood_vignette", "prompt": "..."},
-    {"name": "03_gift_closeup",  "prompt": "..."},
-    {"name": "04_multi_sku_spread", "prompt": "..."},
-]
-```
-
-Replicate API 参数（固定不变）：
-```python
-"version": "225c978a7f938acc350564c4548ddc2476bfb33364bec6b5422227f55ce56bd3",
-"input": {"prompt": prompt, "image": image_url, "quality": "high",
-          "size": "1024x1024", "output_format": "png"}
-```
-
-Token 读取顺序：`~/.ai-hero-photo/config.json` → `~/.claude/projects/hazumi/image_processing/.openai_config.json`
-
-### Step 3 — 运行脚本
+### Step 2 — 生成主图
 
 ```bash
-mkdir -p customers/<brand>/hero-photos/output
-python3 customers/<brand>/hero-photos/generate_hero.py
+python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
+  --mode product \
+  --product-img /path/to/实拍图.jpg \
+  --product "a ceramic incense holder"
 ```
 
-每张约 2–3 分钟，4 张合计约 10 分钟。
+- `--product` 只传**一句话英文品类**（`a ceramic incense holder` / `a handheld portable fan`），**不要描述外观细节**。
+- 干跑加 `--dry-run`；指定输出加 `--output-dir`；国内切硅基流动加 `--provider siliconflow`。
 
-### 输出（非服装类）
+### ⚠️ 保真铁律（防止 AI 把产品重新设计跑偏）
 
-- `output/01_flatlay.png`
-- `output/02_mood_vignette.png`
-- `output/03_gift_closeup.png`
-- `output/04_multi_sku_spread.png`
+实测最大坑：prompt 里**用文字描述产品外观**（如"8 片花瓣扇叶"），会诱导 AI 按文字**重画**产品，结果跟实物差很多。**输入图才是唯一真相，文字只描述场景。**
+
+`product` 模式的 prompt 已**内置保真锁**（脚本 `build_product_prompt()` / `FIDELITY_LOCK`），开头即锁定"recreate the EXACT product… do NOT redesign/stylize/simplify"，四格场景变、产品不变。所以只需传对 `--product` 品类一句话即可，无需自己拼 prompt。
+
+### 输出（product 模式）
+
+一次 API 出一张 2×2 合图，本地切 4 张 + 保留合图：
+
+- `output/shot_1_flatlay.png` — studio hero 平铺
+- `output/shot_2_mood.png` — 氛围场景（道具）
+- `output/shot_3_giftcloseup.png` — 双手捧持礼品感
+- `output/shot_4_detail.png` — 材质/纹理特写
+- `output/collage.png` — 原始 2×2 合图（备用）
+
+**⚠️ 每格约 512px**（合图切割导致分辨率下降），细节特写建议用 Upscayl 4× 放大再上传。
+
+> 旧客户（emotions/shenbox/fulu/gust）仍保留各自的 `generate_hero.py`（每 shot 独立高清，4× 扣费），**不动**；新项目一律走 `--mode product`。
 
 ---
 
@@ -151,13 +134,14 @@ Fields written to `context.json` after this skill completes:
 {
   "parrot": {
     "hero_photos": {
-      "method": "dual-input | replicate-direct",
-      "script": "customers/<brand>/hero-photos/generate_hero.py",
+      "method": "garment-dual-input | product-single-input",
+      "script": "generate.py --mode garment | --mode product",
       "files": [
-        "output/01_flatlay.png",
-        "output/02_mood_vignette.png",
-        "output/03_gift_closeup.png",
-        "output/04_multi_sku_spread.png"
+        "output/shot_1_flatlay.png",
+        "output/shot_2_mood.png",
+        "output/shot_3_giftcloseup.png",
+        "output/shot_4_detail.png",
+        "output/collage.png"
       ]
     }
   }
