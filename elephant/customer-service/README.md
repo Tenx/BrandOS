@@ -106,7 +106,7 @@ Each type uses a tailored response template from your config.
 ### Multi-Shop Support
 - Configure multiple shops in one file
 - Switch between shops with different brand voices
-- **Each shop uses its own Chrome profile** (e.g., HazumiCrafts → "Teng" profile)
+- **Each shop uses its own Chrome profile** (e.g., YourShop → its own profile)
 
 **Important**: opencli connects to whichever Chrome profile has the extension active. Make sure to open Chrome with the correct profile before using the skill.
 
@@ -207,7 +207,7 @@ if status['can_cancel']:
 **Issue**: `opencli doctor` shows extension not connected.
 
 **Solution**:
-1. Make sure Chrome is open with the correct profile (e.g., "Teng" for HazumiCrafts)
+1. Make sure Chrome is open with the correct profile (e.g., the profile for your shop)
 2. Check that the opencli extension is installed and active
 3. Restart Chrome if needed
 4. Run `opencli doctor` to verify connection

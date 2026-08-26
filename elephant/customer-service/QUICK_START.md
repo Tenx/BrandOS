@@ -4,7 +4,7 @@
 
 ### 0. Verify Chrome Profile (IMPORTANT)
 
-**For HazumiCrafts, use Chrome profile "Teng"**
+**Open Chrome with the profile that's logged into your Etsy shop**
 
 ```bash
 # Quick check
@@ -27,7 +27,7 @@ opencli doctor
 # Should show: ✅ connected
 
 # Check Etsy token
-cat /Users/I742076/.claude/projects/hazumi/etsy_publisher/.etsy_token.json
+cat ~/.etsy/etsy_token.json
 # If missing, run: python3 etsy_publisher/oauth_pkce.py
 ```
 
@@ -85,12 +85,12 @@ python3 etsy_api.py refund 4090829817 50.00
 ## 🔧 Troubleshooting
 
 ### Problem: "Shop ID not found"
-**Solution:** Shop ID is loaded from `etsy_shop_profile.yaml`. It's already configured for HazumiCrafts (20691319).
+**Solution:** Shop ID is loaded from `etsy_shop_profile.yaml`. Set your own `shop_id` there.
 
 ### Problem: "Token expired"
 **Solution:**
 ```bash
-cd /Users/I742076/.claude/projects/hazumi
+cd ~/etsy-publisher
 python3 etsy_publisher/oauth_pkce.py
 ```
 

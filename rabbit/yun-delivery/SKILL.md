@@ -3,14 +3,14 @@ name: yun-delivery
 description: >
   Use when the user wants to ship, fulfill, or process Etsy orders via YunExpress (云途).
   Triggers: "帮我发货", "处理订单", "发一下", "有新订单", "submit waybill", "ship orders",
-  "云途", "YunExpress", "运单", "待发货", or any mention of fulfilling / shipping Hazumi orders.
+  "云途", "YunExpress", "运单", "待发货", or any mention of fulfilling / shipping Etsy orders.
 ---
 
 # Yun Delivery
 
 Ship open Etsy orders to YunExpress. Every run is a **fulfillment loop**: list → confirm → submit → record.
 
-Scripts live in `/Users/I742076/.claude/projects/hazumi/fulfillment/`.
+Scripts live in your fulfillment directory (e.g. `~/etsy-fulfillment/`).
 Run all commands from that directory.
 
 ## Steps
@@ -18,7 +18,7 @@ Run all commands from that directory.
 **1. List open orders**
 
 ```bash
-cd /Users/I742076/.claude/projects/hazumi/fulfillment
+cd ~/etsy-fulfillment
 python3 fulfill.py --list
 ```
 
