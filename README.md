@@ -2,31 +2,33 @@
 
 AI-powered cross-border brand system for handmade & independent sellers.
 
+**24 skills across 5 modules** — platform-neutral (Etsy, Shopify, WooCommerce, Amazon, Ozon).
+
 ## Modules
 
 | Module | Animal | Focus |
 |--------|--------|-------|
-| ① Hound | 嗅探犬 | Product research & market validation |
-| ② Parrot | 鹦鹉 | Brand story, content & visual identity |
-| ③ Rabbit | 兔子 | Listing, SEO & publishing |
-| ④ Bee | 蜜蜂 | Paid traffic & distribution |
-| ⑤ Elephant | 大象 | Data review, fulfillment & retention |
+| ① Hound | 🐕 | Product research & market validation |
+| ② Parrot | 🦜 | Brand story, content & visual identity |
+| ③ Rabbit | 🐇 | Listing, SEO & publishing |
+| ④ Bee | 🐝 | Paid traffic & distribution (semi-auto: generates scripts/drafts/lists, human confirms real send/launch) |
+| ⑤ Elephant | 🐘 | Data review, fulfillment & retention |
 
 ## Skills
 
-### Hound (① 嗅探犬) — Product research & market validation
+### Hound (① 🐕) — Product research & market validation
 - [`hound/market-scout`](hound/market-scout) — Scout a category across Reddit + Instagram + Etsy → decision-ready report
 - [`hound/competitor-spy`](hound/competitor-spy) — Deep-dive a competitor shop → gaps, weaknesses, how to beat them
 - [`hound/trend-timer`](hound/trend-timer) — Detect seasonality and timing signals → when to launch
 
-### Parrot (② 鹦鹉) — Brand story, content & visual identity
+### Parrot (② 🦜) — Brand story, content & visual identity
 - [`parrot/brand-story`](parrot/brand-story) — Brand name, tagline, about/bio text & voice guide → paste-ready for any platform
 - [`parrot/product-copy`](parrot/product-copy) — Product hook, bullets, story & specs → platform-neutral copy for Rabbit skills
 - [`parrot/social-post`](parrot/social-post) — Instagram, Pinterest, TikTok & Facebook posts from one product brief
 - [`parrot/ai-hero-photo`](parrot/ai-hero-photo) — AI hero image generation: model ref + garment flatlay → 4-view product photos
 - [`parrot/product-collage-outpaint`](parrot/product-collage-outpaint) — Post-process hero images: split collage, upscale, FLUX background extension
 
-### Rabbit (③ 兔子) — Listing, SEO & publishing
+### Rabbit (③ 🐇) — Listing, SEO & publishing
 - [`rabbit/etsy-listing-manager`](rabbit/etsy-listing-manager) — Etsy listing SEO copy, titles, tags, attributes, CSV audit, draft publishing & OAuth
 - [`rabbit/shopify-listing`](rabbit/shopify-listing) — Shopify product listing: title, body HTML, SEO meta, tags + Admin API publish
 - [`rabbit/woocommerce-listing`](rabbit/woocommerce-listing) — WooCommerce product listing: name, description, Yoast SEO, attributes + REST API publish
@@ -34,7 +36,7 @@ AI-powered cross-border brand system for handmade & independent sellers.
 - [`rabbit/ozon-listing`](rabbit/ozon-listing) — Ozon listing: Russian copy, attributes, rich content + Seller API publish
 - [`rabbit/yun-delivery`](rabbit/yun-delivery) — Cross-border fulfillment via YunExpress (云途): submit waybills, process Etsy orders
 
-### Bee (④ 蜜蜂) — Paid traffic & distribution
+### Bee (④ 🐝) — Paid traffic & distribution
 - [`bee/audience-finder`](bee/audience-finder) — Build buyer persona + platform targeting parameters for Meta, Pinterest, TikTok, Google Shopping
 - [`bee/ad-creative-brief`](bee/ad-creative-brief) — Generate image specs, video hooks, A/B copy variants per platform from product copy
 - [`bee/campaign-plan`](bee/campaign-plan) — ROAS-driven 3-phase campaign plan: budget allocation, bid strategy, kill rules, scale rules
@@ -42,7 +44,7 @@ AI-powered cross-border brand system for handmade & independent sellers.
 - [`bee/cold-email-sequence`](bee/cold-email-sequence) — 3-email cold sequence with personalization → Gmail drafts (not sent) + follow-up tracking
 - [`bee/ad-launcher`](bee/ad-launcher) — Generate Meta/Google/TikTok/Pinterest Ads launch scripts (official SDKs + REST) — PAUSED campaigns, human enables
 
-### Elephant (⑤ 大象) — Data review, fulfillment & retention
+### Elephant (⑤ 🐘) — Data review, fulfillment & retention
 - [`elephant/customer-service`](elephant/customer-service) — Cross-platform buyer messaging: Etsy, Amazon, Shopify — read, classify, draft, send
 - [`elephant/sales-review`](elephant/sales-review) — Weekly/monthly sales analysis: tier products by performance, identify root causes, output top 3 actions
 - [`elephant/review-manager`](elephant/review-manager) — Monitor reviews, reply to negatives, request reviews from satisfied buyers
@@ -53,19 +55,19 @@ AI-powered cross-border brand system for handmade & independent sellers.
 Install any skill globally with `npx skills add`:
 
 ```bash
-# Hound (① 嗅探犬) — product research & market validation
+# Hound (① 🐕) — product research & market validation
 npx skills add Tenx/BrandOS/hound/market-scout -g
 npx skills add Tenx/BrandOS/hound/competitor-spy -g
 npx skills add Tenx/BrandOS/hound/trend-timer -g
 
-# Parrot (② 鹦鹉) — brand story, content & visual identity
+# Parrot (② 🦜) — brand story, content & visual identity
 npx skills add Tenx/BrandOS/parrot/brand-story -g
 npx skills add Tenx/BrandOS/parrot/product-copy -g
 npx skills add Tenx/BrandOS/parrot/social-post -g
 npx skills add Tenx/BrandOS/parrot/ai-hero-photo -g
 npx skills add Tenx/BrandOS/parrot/product-collage-outpaint -g
 
-# Rabbit (③ 兔子) — listing, SEO & publishing
+# Rabbit (③ 🐇) — listing, SEO & publishing
 npx skills add Tenx/BrandOS/rabbit/etsy-listing-manager -g
 npx skills add Tenx/BrandOS/rabbit/shopify-listing -g
 npx skills add Tenx/BrandOS/rabbit/woocommerce-listing -g
@@ -73,7 +75,7 @@ npx skills add Tenx/BrandOS/rabbit/amazon-listing -g
 npx skills add Tenx/BrandOS/rabbit/ozon-listing -g
 npx skills add Tenx/BrandOS/rabbit/yun-delivery -g
 
-# Bee (④ 蜜蜂) — paid traffic & distribution
+# Bee (④ 🐝) — paid traffic & distribution
 npx skills add Tenx/BrandOS/bee/audience-finder -g
 npx skills add Tenx/BrandOS/bee/ad-creative-brief -g
 npx skills add Tenx/BrandOS/bee/campaign-plan -g
@@ -81,15 +83,12 @@ npx skills add Tenx/BrandOS/bee/kol-outreach -g
 npx skills add Tenx/BrandOS/bee/cold-email-sequence -g
 npx skills add Tenx/BrandOS/bee/ad-launcher -g
 
-# Elephant (⑤ 大象) — data review, fulfillment & retention
+# Elephant (⑤ 🐘) — data review, fulfillment & retention
 npx skills add Tenx/BrandOS/elephant/customer-service -g
 npx skills add Tenx/BrandOS/elephant/sales-review -g
 npx skills add Tenx/BrandOS/elephant/review-manager -g
 npx skills add Tenx/BrandOS/elephant/retention -g
 ```
-
-## 9.9 Intro Guide
-¥9.9 跨境实战资料包 — Parrot 模块配套入门教程，主图改造 + Brand OS 系统导览
 
 ## Workflow Docs
 

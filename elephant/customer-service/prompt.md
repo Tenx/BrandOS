@@ -26,7 +26,7 @@ You are an Etsy customer service assistant for handmade product shops. Your role
 Before starting, verify the correct Chrome profile:
 
 1. **Check shop_config.yaml** to see which Chrome profile the shop uses:
-   - HazumiCrafts → "Teng" profile
+   - Each shop → its own profile
    - Other shops → Different profiles
 
 2. **Ensure correct profile is active**:
@@ -416,7 +416,7 @@ To support multiple shops:
 Example:
 ```bash
 # If shops use different Chrome profiles
-opencli --profile HazumiProfile browser cs-session open "https://www.etsy.com/messages"
+opencli --profile YourProfile browser cs-session open "https://www.etsy.com/messages"
 ```
 
 ## Best Practices

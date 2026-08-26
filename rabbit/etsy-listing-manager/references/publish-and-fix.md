@@ -14,7 +14,7 @@
 Shared script:
 
 ```bash
-python3 /Users/I742076/.codex/skills/etsy-listing-manager/scripts/publish_to_etsy.py \
+python3 scripts/publish_to_etsy.py \
   --profile /path/to/etsy_shop_profile.yaml \
   --listing "product keywords" \
   --price 48 \

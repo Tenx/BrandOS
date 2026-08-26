@@ -5,11 +5,11 @@ Use a YAML profile to keep shop-specific values out of reusable skills and scrip
 ```yaml
 profile_version: 1
 shop:
-  name: HazumiCrafts
-  shop_id: 20691319
+  name: YourShopName
+  shop_id: 12345678
 
 paths:
-  project_root: /Users/I742076/.claude/projects/hazumi
+  project_root: ~/your-etsy-project
   listing_dir: listing_seo
   image_dir: image_processing/output
   token_file: etsy_publisher/.etsy_token.json

@@ -24,9 +24,8 @@ class EtsyAPIClient:
         if token_file is None:
             # Try to find token file
             possible_paths = [
-                Path.home() / ".claude/projects/hazumi/etsy_publisher/.etsy_token.json",
-                Path(__file__).parent.parent.parent / "hazumi/etsy_publisher/.etsy_token.json",
-                Path("/Users/I742076/.claude/projects/hazumi/etsy_publisher/.etsy_token.json")
+                Path.home() / ".etsy/etsy_token.json",
+                Path(__file__).parent / ".etsy_token.json",
             ]
             for path in possible_paths:
                 if path.exists():
@@ -47,8 +46,8 @@ class EtsyAPIClient:
         self.api_key = None
         self.api_secret = None
         env_paths = [
-            Path.home() / ".claude/projects/hazumi/etsy_publisher/.env",
-            Path("/Users/I742076/.claude/projects/hazumi/etsy_publisher/.env")
+            Path.home() / ".etsy/.env",
+            Path(__file__).parent / ".env",
         ]
         for env_path in env_paths:
             if env_path.exists():
@@ -131,8 +130,8 @@ class EtsyAPIClient:
         if shop_id is None:
             # Try to load shop_id from etsy_shop_profile.yaml
             profile_paths = [
-                Path.home() / ".claude/projects/hazumi/etsy_shop_profile.yaml",
-                Path("/Users/I742076/.claude/projects/hazumi/etsy_shop_profile.yaml")
+                Path.home() / ".etsy/etsy_shop_profile.yaml",
+                Path(__file__).parent / "etsy_shop_profile.yaml",
             ]
             for profile_path in profile_paths:
                 if profile_path.exists():

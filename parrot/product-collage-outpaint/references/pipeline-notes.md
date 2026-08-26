@@ -2,7 +2,7 @@
 
 ## Boundary Detection
 
-Most Hazumi collage inputs use white gutters. Detect near-white pixels and find vertical/horizontal runs whose white-pixel density is high enough over a meaningful length. Use those gutters to form candidate rectangular panels, then ignore tiny/blank regions.
+Most collage inputs use white gutters. Detect near-white pixels and find vertical/horizontal runs whose white-pixel density is high enough over a meaningful length. Use those gutters to form candidate rectangular panels, then ignore tiny/blank regions.
 
 If gutter detection fails, fall back to connected-component segmentation on non-white regions, then manually inspect the QA contact sheet.
 

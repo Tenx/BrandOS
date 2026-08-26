@@ -79,8 +79,8 @@ Add it to the project's MCP config (`.mcp.json` or the project entry in `~/.clau
       "command": "npx",
       "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
       "env": {
-        "HTTPS_PROXY": "http://127.0.0.1:10080",
-        "HTTP_PROXY": "http://127.0.0.1:10080",
+        "HTTPS_PROXY": "http://<your-proxy-host>:<port>",
+        "HTTP_PROXY": "http://<your-proxy-host>:<port>",
         "NO_PROXY": "localhost,127.0.0.1"
       }
     }

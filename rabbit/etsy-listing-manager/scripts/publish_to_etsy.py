@@ -101,7 +101,7 @@ def get_authorization():
         'client_id': api_key,
         'redirect_uri': REDIRECT_URI,
         'scope': SCOPES,
-        'state': 'hazumi_auth'
+        'state': 'etsy_auth'
     }
 
     auth_url = f"{AUTH_URL}?{urlencode(params)}"
