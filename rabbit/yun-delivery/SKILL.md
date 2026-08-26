@@ -81,7 +81,7 @@ python3 fulfill.py --list-methods --country US
 
 **Track a waybill**:
 ```bash
-python3 fulfill.py --track --order-no HAZUMI-<receipt_id>
+python3 fulfill.py --track --order-no SHOP-<receipt_id>
 # or
 python3 fulfill.py --track --order-no YT<waybill_number>
 ```
