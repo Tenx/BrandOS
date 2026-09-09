@@ -61,6 +61,16 @@ Define how this brand writes in 4 dimensions:
 - **Words it avoids** — 3 things that feel off-brand
 - **One example sentence** — rewrites a generic line in this brand's voice
 
+### 4. De-slop pass
+
+Before writing the Output, run the tagline, short bio, and long bio through the shared
+de-slop pass in [`../no-slop.md`](../no-slop.md): cut banned EN/中文 AI-slop words
+(赋能/打造/彰显/匠心 · elevate/curated/artisanal), kill faux-insight setups, colon reveals,
+and any fake-profound kicker line, and apply the portability test so the bio couldn't be
+pasted onto a different brand unchanged. Keep the distinct voice register you just
+defined — a minimal-earthy brand and a bold-playful brand must not come out identical.
+Never invent an origin detail or stat to sound concrete; if it isn't in the input, ask.
+
 ## Output
 
 ```
@@ -88,5 +98,6 @@ Avoid: [word], [word], [word]
 Sounds like: "[example sentence rewritten in brand voice]"
 ```
 
-Report is complete when all four sections are filled and the short bio could be pasted
-into an Etsy about section without editing.
+Report is complete when all four sections are filled, the short bio could be pasted
+into an Etsy about section without editing, and the bios have passed the de-slop
+self-check in [`../no-slop.md`](../no-slop.md).

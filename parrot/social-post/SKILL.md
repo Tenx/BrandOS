@@ -76,7 +76,16 @@ Extract: product name, key features, price, any lifestyle language already in th
   - unspecified: "Shop here → [link]"
 - No hashtags or max 2–3
 
-### 3. Batch or single
+### 3. De-slop pass
+
+Run the caption **prose** (IG caption body, FB post, Pinterest description, TikTok
+spoken lines) through the shared de-slop pass in [`../no-slop.md`](../no-slop.md): cut
+banned EN/中文 slop words, kill faux-insight/binary-contrast openers and fake-profound
+kickers, and apply the portability test. Respect the carve-outs — CTAs ("Shop on Etsy →",
+"Link in bio"), hashtag blocks, and keyword-first Pinterest titles are format/SEO
+requirements, not slop, and stay. Don't invent claims to sound concrete.
+
+### 4. Batch or single
 
 If user asks for a **content batch** (e.g. "4 posts for this week"), generate:
 - Day 1: product reveal (Instagram + Pinterest)
@@ -123,5 +132,7 @@ Sound vibe: [description]
 Shop here → [link]
 ```
 
-Report is complete when all requested platforms have a filled section and the Instagram
-caption hook does not start with the product name.
+Report is complete when all requested platforms have a filled section, the Instagram
+caption hook does not start with the product name, and the caption prose has passed the
+de-slop self-check in [`../no-slop.md`](../no-slop.md) (CTAs, hashtags, and SEO titles
+exempt).
