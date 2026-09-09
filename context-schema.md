@@ -11,7 +11,7 @@ Each skill appends its own section — never edit another module's fields.
     "brand": "",
     "brand_dir": "~/.claude/projects/brand-os/<brand-name>/",
     "created": "YYYY-MM-DD",
-    "pipeline_version": "1.0"
+    "pipeline_version": "2.0"
   },
 
   "product": {
@@ -183,6 +183,23 @@ Each skill appends its own section — never edit another module's fields.
       "tiers": { "A": [], "B": [], "C": [], "D": [] },
       "top_actions": []
     }
+  },
+
+  "results": {
+    "_note": "MEASURED actuals only. Never written by skills. Plans live in bee.campaign.* and are never overwritten here.",
+    "currency": "USD",
+    "latest": {
+      "period": "2026-08",
+      "sales": {
+        "orders": 0, "revenue": 0, "units_total": 0,
+        "by_sku": [ { "sku_id": "", "units": 0, "revenue": 0 } ]
+      },
+      "funnel": { "sessions": 0, "conversion_rate": 0, "repeat_purchase_rate": 0, "aov": 0 },
+      "ads": [ { "platform": "", "campaign_id": "", "spend": 0, "impressions": 0, "clicks": 0, "actual_roas": 0 } ]
+    },
+    "snapshots": [
+      { "date": "YYYY-MM-DD", "metrics": { "revenue": 0, "orders": 0, "conversion_rate": 0, "blended_actual_roas": 0, "repeat_purchase_rate": 0 } }
+    ]
   }
 }
 ```
@@ -193,3 +210,31 @@ Each skill appends its own section — never edit another module's fields.
 - Skills write only their own module's output fields
 - `_meta.pipeline_version` helps track schema changes across brands
 - Store this file locally only — never commit to git (contains brand strategy)
+
+## Plan vs Actual — the moat
+
+The top-level `results` block is **MEASURED actuals only** and is physically separate from every planning field. This is the single most important design rule:
+
+- **Plans** live in `bee.campaign.*` (break-even ROAS, target ROAS, budget phases) — written and overwritten by skills on every re-run.
+- **Actuals** live in `results.*` — filled by a human (or a future importer), **never** by a skill.
+- Because they are separate keys, re-running any skill (which only touches plan fields) can **never** overwrite real history. The record is append-only. This is the Klaviyo principle: the data layer only deepens, it never gets clobbered.
+
+`results.latest` is a convenience snapshot (the current month, read fast). `results.snapshots[]` is an **append-only** time series — one `{date, metrics{}}` per period — so filtering the array shows the trend.
+
+- Per-SKU actuals: `results.latest.sales.by_sku[].sku_id` aligns to `product.skus[].id` (or `parrot.copy.skus[].id` on older files).
+- Per-platform ad actuals: `results.latest.ads[].platform` aligns to the planned `bee.campaign.platforms` — so plan vs actual joins directly.
+
+## Canonical shapes (v2)
+
+These are **declared, not enforced**. New files should follow one shape; the portfolio reader (`core/portfolio/aggregate.py`) tolerates the older/messier variants via its normalization layer.
+
+- **phases** → array of `{name, duration_days, daily_budget_usd, platforms[], target_roas, goal, kill_rule}`
+- **SKU pricing** → `product.skus[].price_usd` + `cogs_usd`; else brand-level `bee.campaign.price_usd` / `cogs_usd`
+- **VI** → `parrot.vi`
+- **bee.execution.ads** → `{platforms[], scripts[{platform,path,campaign_id}], enabled_by_human}`
+- **COGS / break-even** → `bee.campaign.cogs_usd` + `bee.campaign.break_even_roas`
+
+## Changelog
+
+- **2.0** — Added top-level `results` block (measured actuals, append-only time series, plan/actual physically separated). Declared `## Canonical shapes (v2)` to converge new files without a forced migration. Older files (`brand`/`category` at top level, string prices, `parrot.copy.skus`) remain valid — the portfolio reader normalizes them.
+- **1.0** — Initial per-module schema (product / hound / parrot / rabbit / bee / elephant).
