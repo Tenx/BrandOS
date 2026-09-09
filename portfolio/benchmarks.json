@@ -1,0 +1,140 @@
+{
+  "generated_from": "<project>/customers/*/context.json",
+  "brand_count": 7,
+  "skipped": [],
+  "per_brand": [
+    {
+      "brand": "Marlowe & Dot",
+      "file": "customers/cushion/context.json",
+      "category": "homeware",
+      "price": 32.0,
+      "cogs": null,
+      "break_even_roas": null,
+      "actual_roas": null,
+      "has_actuals": false
+    },
+    {
+      "brand": "emotions",
+      "file": "customers/emotions/context.json",
+      "category": "incense",
+      "price": 28.0,
+      "cogs": 15.5,
+      "break_even_roas": 2.24,
+      "actual_roas": null,
+      "has_actuals": false
+    },
+    {
+      "brand": "fulu",
+      "file": "customers/fulu/context.json",
+      "category": "tea",
+      "price": 22.0,
+      "cogs": 7.0,
+      "break_even_roas": 1.47,
+      "actual_roas": null,
+      "has_actuals": false
+    },
+    {
+      "brand": "HazumiCrafts",
+      "file": "customers/hazumi/context.json",
+      "category": "apparel",
+      "price": null,
+      "cogs": null,
+      "break_even_roas": null,
+      "actual_roas": null,
+      "has_actuals": false
+    },
+    {
+      "brand": "HazumiCrafts",
+      "file": "customers/hazumicrafts/context.json",
+      "category": "apparel",
+      "price": 280.9,
+      "cogs": null,
+      "break_even_roas": null,
+      "actual_roas": null,
+      "has_actuals": false
+    },
+    {
+      "brand": "shenbox",
+      "file": "customers/shenbox/context.json",
+      "category": "spiritual",
+      "price": 299.0,
+      "cogs": 8.5,
+      "break_even_roas": 1.03,
+      "actual_roas": null,
+      "has_actuals": false
+    },
+    {
+      "brand": "wiloop",
+      "file": "customers/wiloop/context.json",
+      "category": "pet",
+      "price": 699.0,
+      "cogs": 280.0,
+      "break_even_roas": 1.67,
+      "actual_roas": null,
+      "has_actuals": false
+    }
+  ],
+  "benchmarks": {
+    "apparel": {
+      "brands": [
+        "HazumiCrafts",
+        "HazumiCrafts"
+      ],
+      "n": 2,
+      "median_price": 280.9,
+      "median_break_even_roas": null,
+      "brands_with_actuals": 0,
+      "plan_vs_actual": []
+    },
+    "homeware": {
+      "brands": [
+        "Marlowe & Dot"
+      ],
+      "n": 1,
+      "median_price": 32.0,
+      "median_break_even_roas": null,
+      "brands_with_actuals": 0,
+      "plan_vs_actual": []
+    },
+    "incense": {
+      "brands": [
+        "emotions"
+      ],
+      "n": 1,
+      "median_price": 28.0,
+      "median_break_even_roas": 2.24,
+      "brands_with_actuals": 0,
+      "plan_vs_actual": []
+    },
+    "pet": {
+      "brands": [
+        "wiloop"
+      ],
+      "n": 1,
+      "median_price": 699.0,
+      "median_break_even_roas": 1.67,
+      "brands_with_actuals": 0,
+      "plan_vs_actual": []
+    },
+    "spiritual": {
+      "brands": [
+        "shenbox"
+      ],
+      "n": 1,
+      "median_price": 299.0,
+      "median_break_even_roas": 1.03,
+      "brands_with_actuals": 0,
+      "plan_vs_actual": []
+    },
+    "tea": {
+      "brands": [
+        "fulu"
+      ],
+      "n": 1,
+      "median_price": 22.0,
+      "median_break_even_roas": 1.47,
+      "brands_with_actuals": 0,
+      "plan_vs_actual": []
+    }
+  }
+}
