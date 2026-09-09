@@ -53,7 +53,16 @@ From inputs, identify:
 — Material, dimensions, care instructions, available variations
 — Bullet format, factual only
 
-### 3. Platform adaptation notes
+### 3. De-slop pass
+
+Before writing the Output, run every **prose** block (hook + story) through the shared
+de-slop pass in [`../no-slop.md`](../no-slop.md): cut banned EN/中文 AI-slop words, kill
+faux-insight setups / colon reveals / fake-profound kickers, apply the portability test,
+and keep the SKU's price register. Respect the e-commerce carve-outs — bullets stay
+bullets, CTAs and any compliance/disclaimer line stay verbatim. Never invent a stat to
+sound concrete; if the fact isn't in the input, cut the vague claim.
+
+### 4. Platform adaptation notes
 
 Flag any copy blocks that need adjustment per platform:
 - **Amazon**: bullet points must start with capital, under 200 chars each; story paragraph → A+ Content
@@ -89,5 +98,7 @@ Flag any copy blocks that need adjustment per platform:
 [Any flags for Amazon / Etsy / Shopify / Ozon adaptation]
 ```
 
-Report is complete when all four blocks are filled and the hook sentence does not
-start with the product name or "handmade".
+Report is complete when all four blocks are filled, the hook sentence does not start
+with the product name or "handmade", and the prose has passed the de-slop self-check in
+[`../no-slop.md`](../no-slop.md) (no banned EN/中文 slop word, no faux-insight/colon-reveal/
+kicker, no invented stat).
