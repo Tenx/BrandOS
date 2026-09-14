@@ -72,7 +72,7 @@ def setup_config() -> None:
 
     cfg = {
         "replicate_api_token": replicate_token,
-        "replicate_model": "openai/gpt-image-2",
+        "replicate_model": "openai/gpt-image-2.5-sunburst",
         "siliconflow_api_key": sf_key,
         "siliconflow_model": "Qwen/Qwen-Image-Edit-2509",
         "quality": "auto",
@@ -156,7 +156,7 @@ def generate_with_replicate(
         sys.exit(1)
 
     os.environ["REPLICATE_API_TOKEN"] = token
-    model = cfg.get("replicate_model", "openai/gpt-image-2")
+    model = cfg.get("replicate_model", "openai/gpt-image-2.5-sunburst")
 
     print(f"   🤖 模型：{model}")
     print(f"   ⏳ 生成中（约 2-5 分钟）...")
