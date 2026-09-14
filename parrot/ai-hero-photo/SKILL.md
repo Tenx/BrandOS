@@ -1,6 +1,6 @@
 ---
 name: ai-hero-photo
-description: AI 主图生成：统一脚本 generate.py，用 --mode 切换。服装类→双图输入（模特参考图+平铺图）；非服装类→单图输入（产品实拍）。两模式都一次 API 出 2×2 合图→本地切 4 张。支持 Replicate (openai/gpt-image-2)，国内可切换硅基流动。Use when the user wants to generate ecommerce hero images for any handmade or physical product.
+description: AI 主图生成：统一脚本 generate.py，用 --mode 切换。服装类→双图输入（模特参考图+平铺图）；非服装类→单图输入（产品实拍）。两模式都一次 API 出 2×2 合图→本地切 4 张。支持 Replicate (openai/gpt-image-2.5-sunburst)，国内可切换硅基流动。Use when the user wants to generate ecommerce hero images for any handmade or physical product.
 ---
 
 # AI Hero Photo
@@ -118,7 +118,7 @@ python3 ~/.agents/skills/ai-hero-photo/scripts/generate.py \
 
 ## 常见问题
 
-**生成太慢？** Replicate gpt-image-2 正常 2–3 分钟/张，无法加速。
+**生成太慢？** Replicate gpt-image-2.5-sunburst 正常 2–3 分钟/张，无法加速。
 
 **颜色/造型跑偏？** 在 prompt 里加强产品描述，如 `"white slim box with oval color marker, exact packaging preserved"`。
 

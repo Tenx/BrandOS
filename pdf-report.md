@@ -114,7 +114,7 @@ If fonts must work offline, download and embed as base64 in `<style>` instead.
 
 ---
 
-# Hero Photo Generation — Replicate gpt-image-2
+# Hero Photo Generation — Replicate gpt-image-2.5-sunburst
 
 Used for all Brand OS product hero image generation (non-fashion/non-apparel products).
 For jewellery/craft/accessory products, use this directly instead of `ai-hero-photo` skill.
@@ -129,7 +129,7 @@ Always fetch latest at runtime:
 ```bash
 TOKEN=<replicate_token>
 curl -s -H "Authorization: Bearer $TOKEN" \
-  https://api.replicate.com/v1/models/openai/gpt-image-2 \
+  https://api.replicate.com/v1/models/openai/gpt-image-2.5-sunburst \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['latest_version']['id'])"
 ```
 
