@@ -2,7 +2,7 @@
 
 AI-powered cross-border brand system for handmade & independent sellers.
 
-**24 skills across 5 modules** — platform-neutral (Etsy, Shopify, WooCommerce, Amazon, Ozon).
+**25 skills across 5 modules** — platform-neutral (Etsy, Shopify, WooCommerce, Amazon, Ozon).
 
 ## Modules
 
@@ -43,6 +43,7 @@ AI-powered cross-border brand system for handmade & independent sellers.
 - [`bee/kol-outreach`](bee/kol-outreach) — Discover creators, tier them, draft personalized DMs/emails + follow-up sequence — semi-auto, stops before send
 - [`bee/cold-email-sequence`](bee/cold-email-sequence) — 3-email cold sequence with personalization → Gmail drafts (not sent) + follow-up tracking
 - [`bee/ad-launcher`](bee/ad-launcher) — Generate Meta/Google/TikTok/Pinterest Ads launch scripts (official SDKs + REST) — PAUSED campaigns, human enables
+- [`bee/campaign-monitor`](bee/campaign-monitor) — Daily ad performance check: pull real data, compare against kill/scale thresholds, output recommendation — read-only, human decides
 
 ### Elephant (⑤ 🐘) — Data review, fulfillment & retention
 - [`elephant/customer-service`](elephant/customer-service) — Cross-platform buyer messaging: Etsy, Amazon, Shopify — read, classify, draft, send
@@ -82,6 +83,7 @@ npx skills add Tenx/BrandOS/bee/campaign-plan -g
 npx skills add Tenx/BrandOS/bee/kol-outreach -g
 npx skills add Tenx/BrandOS/bee/cold-email-sequence -g
 npx skills add Tenx/BrandOS/bee/ad-launcher -g
+npx skills add Tenx/BrandOS/bee/campaign-monitor -g
 
 # Elephant (⑤ 🐘) — data review, fulfillment & retention
 npx skills add Tenx/BrandOS/elephant/customer-service -g
