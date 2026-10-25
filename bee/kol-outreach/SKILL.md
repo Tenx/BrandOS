@@ -37,17 +37,19 @@ Drive the already-logged-in Chrome to public hashtag/keyword pages, extract crea
 Mirrors the `hound/market-scout` Instagram/TikTok pattern.
 
 ```bash
+S="kol-outreach-$(date +%s)"  # opencli page 命令需 --session
+
 # Instagram hashtag page
-opencli browser main open "https://www.instagram.com/explore/tags/<seed_no_spaces>/"
-opencli browser main extract
+opencli browser open "https://www.instagram.com/explore/tags/<seed_no_spaces>/" --session "$S"
+opencli browser extract --session "$S"
 
 # Open a promising creator profile for follower count + bio + external link
-opencli browser main open "https://www.instagram.com/<handle>/"
-opencli browser main extract
+opencli browser open "https://www.instagram.com/<handle>/" --session "$S"
+opencli browser extract --session "$S"
 
 # TikTok
-opencli browser main open "https://www.tiktok.com/tag/<seed_no_spaces>"
-opencli browser main extract
+opencli browser open "https://www.tiktok.com/tag/<seed_no_spaces>" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 From each profile extract: `handle`, follower count, bio, external link, and any public email
@@ -110,12 +112,13 @@ Plan a 3-touch cadence per creator, tracked by status:
 For DM sending, prepare opencli commands but **stop before clicking send**:
 
 ```bash
+S="kol-outreach-dm-$(date +%s)"  # opencli page 命令需 --session
 # Open the creator's DM thread
-opencli browser main open "https://www.instagram.com/direct/t/<thread_or_handle>"
+opencli browser open "https://www.instagram.com/direct/t/<thread_or_handle>" --session "$S"
 # Locate the message box
-opencli browser main find --css 'textarea[placeholder*="Message"]'
+opencli browser find --css 'textarea[placeholder*="Message"]' --session "$S"
 # Fill the drafted text (does NOT send)
-opencli browser main type <ref> "<personalized DM text>"
+opencli browser type <ref> "<personalized DM text>" --session "$S"
 # STOP — hand control to the human to review and click Send manually
 ```
 

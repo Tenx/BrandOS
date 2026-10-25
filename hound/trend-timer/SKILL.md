@@ -23,19 +23,24 @@ If not provided, ask before proceeding.
 ### 1. Collect timing signals in parallel
 
 ```bash
+S="trend-timer-$(date +%s)"  # opencli page 命令需 --session
+
 # Reddit — post timestamps reveal when buyers talk about this (seasonal spikes)
-opencli reddit search "<keyword>" --limit 50 -f yaml
+# 注意：`opencli reddit search` 已废（返回 403 LOGIN_WALL），改走 browser 路径；
+# 搜索页列表自带每条帖子的相对时间（如 "3y ago"），可据此判断季节性/recency。
+opencli browser open "https://www.reddit.com/search/?q=<keyword>&sort=top&type=link" --session "$S"
+opencli browser extract --session "$S"
 
 # Etsy search sorted by most recent — what's being listed now vs older listings
 # Note: Etsy may ignore sort_on=date_desc and return score-ranked results anyway.
 # If both extracts look identical, treat the combined result as top listings only
 # and rely on Reddit timestamps as the primary recency/trend signal.
-opencli browser main open "https://www.etsy.com/search?q=<keyword>&sort_on=date_desc"
-opencli browser main extract
+opencli browser open "https://www.etsy.com/search?q=<keyword>&sort_on=date_desc" --session "$S"
+opencli browser extract --session "$S"
 
 # Etsy search sorted by top — what has accumulated the most reviews over time
-opencli browser main open "https://www.etsy.com/search?q=<keyword>&sort_on=score"
-opencli browser main extract
+opencli browser open "https://www.etsy.com/search?q=<keyword>&sort_on=score" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 ### 2. Extract timing signals

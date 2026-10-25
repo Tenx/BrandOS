@@ -58,14 +58,16 @@ Classify each message before drafting a reply:
 
 **Etsy:**
 ```bash
-opencli browser main open "https://www.etsy.com/messages"
-opencli browser main extract
+S="customer-service-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://www.etsy.com/messages" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 **Amazon:**
 ```bash
-opencli browser main open "https://sellercentral.amazon.com/messaging/inbox"
-opencli browser main extract
+S="customer-service-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://sellercentral.amazon.com/messaging/inbox" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 **Shopify (if Admin API configured):**

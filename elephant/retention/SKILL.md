@@ -33,8 +33,9 @@ Pull order history and group buyers:
 
 **Etsy:**
 ```bash
-opencli browser main open "https://www.etsy.com/your/orders/completed"
-opencli browser main extract
+S="retention-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://www.etsy.com/your/orders/completed" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 **Shopify (Admin API):**
