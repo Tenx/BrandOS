@@ -84,6 +84,25 @@ Score each platform 1–5 for this specific product based on:
 
 Output ranked recommendation with one-line rationale per platform.
 
+## 服务/SaaS 类适配分支（非实物产品）
+
+默认流程假设**实物商品 + 海外电商投流**（Meta / Pinterest / TikTok / Google Shopping，KPI = ROAS）。若客户卖的是**服务 / SaaS / 课程 / 咨询 / 诊断**（如 Brand OS、¥699 跨境诊断、陪跑），按以下调整 Step 2–3：
+
+**1. 投放平台改中文内容生态（当目标客群在中国境内）**
+Step 2 的 Meta/Pinterest/TikTok/Google Shopping 四位多半不适用（客群不在海外电商流量池）。改为：
+- **小红书**（通常 #1）：搜索词定向（行业关键词，如"跨境电商/独立站/副业出海"）+ 薯条投搜索页与发现页；用真实案例/干货笔记做钩子。
+- **视频号 / 公众号**（#2）：长内容（图文/视频）建立信任 → 引导私域（企微/社群）→ 转化；公众号沉淀私域复购。
+- **B站**（#3）：教程/实操长视频（如全链 dogfood 录屏），视频中插 + 简介引流。
+- **海外 SaaS 例外**：客群在海外时回到 **Meta / LinkedIn（B2B）/ Google Search（搜索意图）**，而非实物电商的 Pinterest/Shopping。
+
+**2. KPI 换 CAC + LTV（替代 ROAS）**
+- 实物看 ROAS / break-even ROAS；服务/SaaS 看 **CAC（获客成本）** 与 **LTV（客户终身价值）**。
+- 服务常是「引流款 → 高价后端」漏斗（例：¥699 诊断 → ¥2000/hr 咨询 → ¥7000/月 陪跑）。**LTV 远高于单笔**，故**可承受比单笔价更高的 CAC**——别用单笔引流款价算 break-even。
+- Output 里 `### platform priority` 的 `ROAS potential` 字段，服务分支下改成 **`CAC 效率 / LTV 潜力`**。
+
+**3. Persona 是从业者/决策者本人**
+buyer persona 四维照常，但对象是**采购决策者 / 从业者本人**（想做或在做该业务的人），不是终端消费者。触发点通常是"卡住了想找人问 / 想提效"，而非"想买个东西用/送礼"。
+
 ## Output
 
 ```

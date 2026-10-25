@@ -19,21 +19,37 @@ Examples: `"crochet top"`, `"手工蜡烛"`, `"macrame wall hanging"`.
 
 If the user hasn't provided one, ask for it before proceeding.
 
+## 服务/SaaS 类适配分支（非实物产品）
+
+默认流程假设客户卖**实物商品**（三源 = Reddit + Instagram + Etsy）。若客户卖的是**服务 / SaaS / 课程 / 咨询 / 诊断**这类非实物产品（如 Brand OS 自己、¥699 跨境诊断、陪跑服务），三源适用性变化如下，按此调整后再跑 Steps：
+
+| 源 | 实物 | 服务/SaaS | 说明 |
+|----|------|-----------|------|
+| **Reddit** | ✅ | ✅ **主信号源** | 搜目标用户聚集的 subreddit（如 r/Etsy、r/ecommerce、r/SaaS、r/Entrepreneur），挖痛点/抱怨/未满足需求。服务类几乎唯一的强需求信号就来自这里。 |
+| **Instagram 视觉风格** | ✅ | ❌ N/A | 服务/SaaS 无实物视觉，hashtag 视觉风格分析对定位无意义。报告里标 `N/A — 非实物，无视觉风格可验证`。 |
+| **Etsy 竞品定价** | ✅ | ❌ N/A → 改竞品官网 | 服务不在 Etsy 卖。改为搜**同类服务/工具的官网定价页**，对比订阅档位/套餐定价。能定位到竞品官网时：`opencli browser open "<竞品定价页URL>" --session "$S"` → `opencli browser extract --session "$S"`；定位不到则标 `N/A — 无 Etsy 对标，竞品定价见官网调研`。 |
+
+**产出不变**：verdict / winning angle / buyer pain points / risks 照常给，只是数据源偏重 **Reddit + 竞品官网**，而非实物三源。`demand signals` 里 Instagram/Etsy 两行据实写 N/A + 原因（Step 3 允许带理由的 N/A）。`price_range` 填服务的定价区间（如引流款→后端的价格带）。
+
 ## Steps
 
 ### 1. Run three scouts in parallel
 
 ```bash
+S="market-scout-$(date +%s)"  # opencli page 命令需 --session
+
 # Reddit — buyer discussions, pain points, demand signals
-opencli reddit search "<keyword>" --limit 20 -f yaml
+# 注意：`opencli reddit search` 已废（返回 403 LOGIN_WALL），改走 browser 路径
+opencli browser open "https://www.reddit.com/r/Etsy/search/?q=<keyword>&sort=top&type=link" --session "$S"
+opencli browser extract --session "$S"
 
 # Instagram — visual style trends via hashtag page
-opencli browser main open "https://www.instagram.com/explore/tags/<keyword_no_spaces>/"
-opencli browser main extract
+opencli browser open "https://www.instagram.com/explore/tags/<keyword_no_spaces>/" --session "$S"
+opencli browser extract --session "$S"
 
 # Etsy — top listings, pricing, competition density
-opencli browser main open "https://www.etsy.com/search?q=<keyword>&sort_on=score"
-opencli browser main extract
+opencli browser open "https://www.etsy.com/search?q=<keyword>&sort_on=score" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 Run Reddit and browser opens simultaneously. Extract after each browser open.
@@ -100,13 +116,14 @@ This gives Parrot the market context it needs to write on-target copy without gu
 
 ## Notes
 
-**Reddit**: works without login.
+**Reddit**: `opencli reddit search` 已废（403 LOGIN_WALL）；走 browser+session 路径抓公开搜索页，无需登录。
 
 **Instagram**: uses `opencli browser` to fetch public hashtag pages — no login required.
 For deeper profile data, optionally run:
 ```bash
-opencli browser main open "https://www.instagram.com/<top_account>/"
-opencli browser main extract
+S="market-scout-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://www.instagram.com/<top_account>/" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 **Etsy**: uses `opencli browser` to fetch public search results — no token required.

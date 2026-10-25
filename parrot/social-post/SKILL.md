@@ -35,8 +35,9 @@ If no product info provided, ask before proceeding.
 ### 1. Fetch listing if URL provided
 
 ```bash
-opencli browser main open "<listing_url>"
-opencli browser main extract
+S="social-post-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "<listing_url>" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 Extract: product name, key features, price, any lifestyle language already in the listing.

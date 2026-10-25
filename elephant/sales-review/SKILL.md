@@ -27,22 +27,25 @@ User provides:
 
 **Etsy Stats:**
 ```bash
-opencli browser main open "https://www.etsy.com/your/stats"
-opencli browser main extract
+S="sales-review-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://www.etsy.com/your/stats" --session "$S"
+opencli browser extract --session "$S"
 # If paginated or JS-rendered, use find to locate data tables:
-opencli browser main find --css "table, [data-stats], .stats-row"
+opencli browser find --css "table, [data-stats], .stats-row" --session "$S"
 ```
 
 **Amazon Seller Central — Business Reports:**
 ```bash
-opencli browser main open "https://sellercentral.amazon.com/business-reports/ref=xx_sitemetric_cont_home"
-opencli browser main extract
+S="sales-review-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://sellercentral.amazon.com/business-reports/ref=xx_sitemetric_cont_home" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 **Shopify Analytics:**
 ```bash
-opencli browser main open "https://<shop>.myshopify.com/admin/analytics"
-opencli browser main extract
+S="sales-review-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://<shop>.myshopify.com/admin/analytics" --session "$S"
+opencli browser extract --session "$S"
 # Or via Admin API:
 GET /admin/api/2024-01/orders.json?status=any&created_at_min=<date>&fields=id,total_price,line_items,refunds
 ```
