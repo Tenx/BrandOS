@@ -24,16 +24,20 @@ If the user hasn't provided one, ask for it before proceeding.
 ### 1. Run three scouts in parallel
 
 ```bash
+S="market-scout-$(date +%s)"  # opencli page 命令需 --session
+
 # Reddit — buyer discussions, pain points, demand signals
-opencli reddit search "<keyword>" --limit 20 -f yaml
+# 注意：`opencli reddit search` 已废（返回 403 LOGIN_WALL），改走 browser 路径
+opencli browser open "https://www.reddit.com/r/Etsy/search/?q=<keyword>&sort=top&type=link" --session "$S"
+opencli browser extract --session "$S"
 
 # Instagram — visual style trends via hashtag page
-opencli browser main open "https://www.instagram.com/explore/tags/<keyword_no_spaces>/"
-opencli browser main extract
+opencli browser open "https://www.instagram.com/explore/tags/<keyword_no_spaces>/" --session "$S"
+opencli browser extract --session "$S"
 
 # Etsy — top listings, pricing, competition density
-opencli browser main open "https://www.etsy.com/search?q=<keyword>&sort_on=score"
-opencli browser main extract
+opencli browser open "https://www.etsy.com/search?q=<keyword>&sort_on=score" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 Run Reddit and browser opens simultaneously. Extract after each browser open.
@@ -100,13 +104,14 @@ This gives Parrot the market context it needs to write on-target copy without gu
 
 ## Notes
 
-**Reddit**: works without login.
+**Reddit**: `opencli reddit search` 已废（403 LOGIN_WALL）；走 browser+session 路径抓公开搜索页，无需登录。
 
 **Instagram**: uses `opencli browser` to fetch public hashtag pages — no login required.
 For deeper profile data, optionally run:
 ```bash
-opencli browser main open "https://www.instagram.com/<top_account>/"
-opencli browser main extract
+S="market-scout-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://www.instagram.com/<top_account>/" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 **Etsy**: uses `opencli browser` to fetch public search results — no token required.

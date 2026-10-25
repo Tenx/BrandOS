@@ -27,17 +27,19 @@ If not provided, ask before proceeding.
 ### 1. Fetch shop and top listings
 
 ```bash
+S="competitor-spy-$(date +%s)"  # opencli page 命令需 --session
+
 # Shop overview — reviews, sales count, about section
-opencli browser main open "<shop_url>"
-opencli browser main extract
+opencli browser open "<shop_url>" --session "$S"
+opencli browser extract --session "$S"
 
 # Top listings — titles, prices, review counts
-opencli browser main open "<shop_url>?sort_on=most_recent"  # Etsy
-opencli browser main extract
+opencli browser open "<shop_url>?sort_on=most_recent" --session "$S"  # Etsy
+opencli browser extract --session "$S"
 
 # Reviews page
-opencli browser main open "<shop_url>/reviews"  # Etsy
-opencli browser main extract
+opencli browser open "<shop_url>/reviews" --session "$S"  # Etsy
+opencli browser extract --session "$S"
 ```
 
 **JS lazy-load fallback**: if `extract` returns fewer than 200 characters or only navigation
@@ -46,12 +48,12 @@ Do not retry the same URL. Instead:
 
 1. Use `find` to locate any visible product link:
    ```bash
-   opencli browser main find --css "a[href*='/listing/'], a[href*='/products/'], a[href*='/collections/']"
+   opencli browser find --css "a[href*='/listing/'], a[href*='/products/'], a[href*='/collections/']" --session "$S"
    ```
 2. Open the first 2–3 individual product URLs directly and extract those:
    ```bash
-   opencli browser main open "<product_url>"
-   opencli browser main extract
+   opencli browser open "<product_url>" --session "$S"
+   opencli browser extract --session "$S"
    ```
 3. For independent stores, also try the homepage and `/about` page for brand story signals.
 

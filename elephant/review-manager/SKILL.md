@@ -31,21 +31,24 @@ If platform is missing, ask before proceeding.
 
 **Etsy:**
 ```bash
-opencli browser main open "https://www.etsy.com/your/reviews"
-opencli browser main extract
+S="review-manager-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://www.etsy.com/your/reviews" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 **Amazon:**
 ```bash
-opencli browser main open "https://sellercentral.amazon.com/product-reviews"
-opencli browser main extract
+S="review-manager-$(date +%s)"  # opencli page 命令需 --session
+opencli browser open "https://sellercentral.amazon.com/product-reviews" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 **Shopify:**
 ```bash
+S="review-manager-$(date +%s)"  # opencli page 命令需 --session
 # If using Judge.me, Loox, or Stamped.io:
-opencli browser main open "https://<shop>.myshopify.com/admin/apps/<review-app>"
-opencli browser main extract
+opencli browser open "https://<shop>.myshopify.com/admin/apps/<review-app>" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 Extract: star rating, review text, buyer name, product, date.
@@ -81,9 +84,10 @@ Classify: 5★ (positive) / 4★ (neutral) / 1–3★ (negative → urgent).
 
 **Identify candidates:**
 ```bash
+S="review-manager-$(date +%s)"  # opencli page 命令需 --session
 # Etsy — completed orders in last 14 days with no review yet
-opencli browser main open "https://www.etsy.com/your/orders/completed"
-opencli browser main extract
+opencli browser open "https://www.etsy.com/your/orders/completed" --session "$S"
+opencli browser extract --session "$S"
 ```
 
 Filter: orders delivered >3 days ago, no review submitted, no prior complaint.
@@ -110,11 +114,12 @@ Keep it short. One ask. No pressure language ("please please", "it would mean th
 
 **Amazon review request:**
 ```bash
+S="review-manager-$(date +%s)"  # opencli page 命令需 --session
 # Navigate to order in Seller Central → click "Request a Review"
 # Amazon sends a standardized compliant message — do not send custom messages
-opencli browser main open "https://sellercentral.amazon.com/orders-v3"
-opencli browser main find --role button --text "Request a Review"
-opencli browser main click <ref>
+opencli browser open "https://sellercentral.amazon.com/orders-v3" --session "$S"
+opencli browser find --role button --text "Request a Review" --session "$S"
+opencli browser click <ref> --session "$S"
 ```
 
 ## Review Escalation Rules
