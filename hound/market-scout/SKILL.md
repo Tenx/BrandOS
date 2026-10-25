@@ -19,6 +19,18 @@ Examples: `"crochet top"`, `"手工蜡烛"`, `"macrame wall hanging"`.
 
 If the user hasn't provided one, ask for it before proceeding.
 
+## 服务/SaaS 类适配分支（非实物产品）
+
+默认流程假设客户卖**实物商品**（三源 = Reddit + Instagram + Etsy）。若客户卖的是**服务 / SaaS / 课程 / 咨询 / 诊断**这类非实物产品（如 Brand OS 自己、¥699 跨境诊断、陪跑服务），三源适用性变化如下，按此调整后再跑 Steps：
+
+| 源 | 实物 | 服务/SaaS | 说明 |
+|----|------|-----------|------|
+| **Reddit** | ✅ | ✅ **主信号源** | 搜目标用户聚集的 subreddit（如 r/Etsy、r/ecommerce、r/SaaS、r/Entrepreneur），挖痛点/抱怨/未满足需求。服务类几乎唯一的强需求信号就来自这里。 |
+| **Instagram 视觉风格** | ✅ | ❌ N/A | 服务/SaaS 无实物视觉，hashtag 视觉风格分析对定位无意义。报告里标 `N/A — 非实物，无视觉风格可验证`。 |
+| **Etsy 竞品定价** | ✅ | ❌ N/A → 改竞品官网 | 服务不在 Etsy 卖。改为搜**同类服务/工具的官网定价页**，对比订阅档位/套餐定价。能定位到竞品官网时：`opencli browser open "<竞品定价页URL>" --session "$S"` → `opencli browser extract --session "$S"`；定位不到则标 `N/A — 无 Etsy 对标，竞品定价见官网调研`。 |
+
+**产出不变**：verdict / winning angle / buyer pain points / risks 照常给，只是数据源偏重 **Reddit + 竞品官网**，而非实物三源。`demand signals` 里 Instagram/Etsy 两行据实写 N/A + 原因（Step 3 允许带理由的 N/A）。`price_range` 填服务的定价区间（如引流款→后端的价格带）。
+
 ## Steps
 
 ### 1. Run three scouts in parallel
